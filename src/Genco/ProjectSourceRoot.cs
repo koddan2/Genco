@@ -4,16 +4,16 @@ using System.Runtime.CompilerServices;
 
 namespace Genco;
 
-internal static class ProjectSourcePath
+internal static class ProjectSourceRoot
 {
-    private const string selfFilename = nameof(ProjectSourcePath) + ".cs";
+    private const string _SelfFilename = nameof(ProjectSourceRoot) + ".cs";
     internal static Lazy<string> Lazy = new(CalculatePath);
 
     private static string CalculatePath()
     {
         var pathName = GetSourceFilePathName();
         var filename = Path.GetFileName(pathName);
-        Debug.Assert(filename.Equals(selfFilename, StringComparison.Ordinal), "Invalid path");
+        Debug.Assert(filename.Equals(_SelfFilename, StringComparison.Ordinal), "Invalid path");
         var directoryPath = Path.GetDirectoryName(pathName);
         return directoryPath ?? throw new ApplicationException("Null valued path");
     }

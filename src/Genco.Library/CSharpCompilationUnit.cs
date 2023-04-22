@@ -3,6 +3,7 @@
 public static class CSharpCompilationUnit
 {
     public record ViewModel(
+        GencoConfiguration Configuration,
         string Namespace,
         string TypeName,
         string TypeSyntax,
@@ -17,6 +18,7 @@ public static class CSharpCompilationUnit
     public static ViewModel FromConfiguration(GencoConfiguration cfg)
     {
         var viewModel = new ViewModel(
+            Configuration: cfg,
             Namespace: cfg.Namespace.Default(FileResolver.ResolveCsproj(cfg)),
             TypeName: cfg.Name.Default(FileResolver.ResolveFilename(cfg)),
             TypeSyntax: cfg.Type.Default("record"),
@@ -27,6 +29,17 @@ public static class CSharpCompilationUnit
         if (cfg.FileHeader is not null)
         {
             viewModel.FileHeader = cfg.FileHeader;
+        }
+        else
+        {
+            viewModel.FileHeader = "";
+        }
+
+        if (cfg.FileHeaderInclude is not null)
+        {
+            var includeFile = FileResolver.ResolveRelativeTo(cfg.PathToConfigurationFile, cfg.FileHeaderInclude);
+            cfg.FileHeader += Environment.NewLine;
+            viewModel.FileHeader += File.ReadAllText(includeFile);
         }
 
         ////if (cfg.Constructor is not null)

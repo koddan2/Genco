@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genco", "Genco\Genco.csproj", "{701DCB7B-13AE-4CBD-8648-091D7E326839}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genco", "Genco\Genco.csproj", "{701DCB7B-13AE-4CBD-8648-091D7E326839}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genco.Library", "Genco.Library\Genco.Library.csproj", "{440B05A8-1545-4AC2-BAD5-5CB9230491DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genco.Library", "Genco.Library\Genco.Library.csproj", "{440B05A8-1545-4AC2-BAD5-5CB9230491DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genco.Test", "Genco.Test\Genco.Test.csproj", "{36E75181-C900-45DF-A8FC-8B4A345E9A91}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{440B05A8-1545-4AC2-BAD5-5CB9230491DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{440B05A8-1545-4AC2-BAD5-5CB9230491DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{440B05A8-1545-4AC2-BAD5-5CB9230491DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36E75181-C900-45DF-A8FC-8B4A345E9A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36E75181-C900-45DF-A8FC-8B4A345E9A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36E75181-C900-45DF-A8FC-8B4A345E9A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36E75181-C900-45DF-A8FC-8B4A345E9A91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

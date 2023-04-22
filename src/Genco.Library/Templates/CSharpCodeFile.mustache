@@ -9,6 +9,7 @@ using {{.}};
 
 namespace {{Namespace}}
 {
+{{& Configuration.CustomCode}}
     /// <summary>
     /// This is a generated class.
     /// The tool used to generate this file is called Genco.
@@ -23,4 +24,12 @@ namespace {{Namespace}}
         public {{TypeSyntax}} {{Name}} { get;{{SetterSyntax}} }{{DefaultValueSyntax}}
         {{/Properties}}
     }
+
+{{#Configuration.Generate.Mappers.Dictionary}}
+{{>CSharpCodeDictionaryMappingMethods}}
+{{/Configuration.Generate.Mappers.Dictionary}}
+
+{{#Configuration.Generate.Mappers.AdoNet}}
+{{>CSharpCodeAdoNetMappingMethods}}
+{{/Configuration.Generate.Mappers.AdoNet}}
 }

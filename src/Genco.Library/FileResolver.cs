@@ -42,4 +42,11 @@ public static class FileResolver
         }
         throw new ArgumentException("Unable to resolve project base directory");
     }
+
+    internal static string ResolveRelativeTo(string? pathToConfigurationFile, string fileHeaderInclude)
+    {
+        var dir = Path.GetDirectoryName(pathToConfigurationFile).Require();
+        var path = Path.Combine(dir, fileHeaderInclude);
+        return Path.GetFullPath(path.Require());
+    }
 }

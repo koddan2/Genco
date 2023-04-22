@@ -2,8 +2,10 @@
 
 public record GencoConfiguration
 {
+    public string? CustomCode { get; set; }
     public string? PathToConfigurationFile { get; set; }
     public string? FileHeader { get; set; }
+    public string? FileHeaderInclude { get; set; }
     public string? Namespace { get; set; }
     public string? Name { get; set; }
     public string? Type { get; set; }
@@ -11,6 +13,10 @@ public record GencoConfiguration
     public GencoConfigurationGenerateElement Generate { get; set; } = new GencoConfigurationGenerateElement();
     public GencoConfigurationRecordElement Record { get; set; } = new GencoConfigurationRecordElement();
     public Dictionary<string, PropertyDefinition> Properties { get; set; } = new Dictionary<string, PropertyDefinition>();
+
+    public object? Constructor { get; set; }
+
+    public bool HasDefaultConstructor => Record.ParameterList.Count == 0 && Constructor is null;
 }
 
 public class GencoConfigurationRecordElement
@@ -31,6 +37,9 @@ public record PropertyDefinition
     public string? TypeSyntax => Type;
     public string? SetterSyntax => Setter is null ? "" : $" {Setter};";
     public string? DefaultValueSyntax => DefaultValue is null ? "" : $" = {DefaultValue};";
+    public bool IsAssignable => Setter == "set";
+    public bool IsNullable => Type?.StartsWith("Nullable<") is true || Type?.EndsWith("?") is true;
+    public bool IsNotNull => !IsNullable;
 }
 public record RecordParameterDefinition
 {

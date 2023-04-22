@@ -1,0 +1,62 @@
+    public static class {{TypeName}}DictionaryMappingExtensions
+    {
+        {{#HasDefaultConstructor}}
+        public static {{TypeName}} FromDictionary(this IDictionary<string, object?> dictionary)
+        {
+            return new {{TypeName}}();
+        }
+        {{/HasDefaultConstructor}}
+
+        public static void PopulateFromDictionary(this {{TypeName}} instance, IDictionary<string, object?> dictionary)
+        {
+            {{#Properties}}
+            {{#IsAssignable}}
+            if (dictionary.TryGetValue("{{Name}}", out var {{Name}}_Boxed))
+            {
+                if ({{Name}}_Boxed is {{TypeSyntax}})
+                {
+                    instance.{{Name}} = ({{TypeSyntax}}){{Name}}_Boxed;
+                }
+                {{#IsNotNull}}
+                else
+                {
+                    throw new ArgumentException("The value for the key '{{Name}}' in the supplied dictionary is null", nameof(dictionary));
+                }
+                {{/IsNotNull}}
+                {{#IsNullable}}
+                else
+                {
+                    instance.{{Name}} = null;
+                }
+                {{/IsNullable}}
+            }
+            {{#IsNotNull}}
+            else
+            {
+                throw new KeyNotFoundException("The key '{{Name}}' was not present in the supplied dictionary");
+            }
+            {{/IsNotNull}}
+            {{#IsNullable}}
+            else
+            {
+                instance.{{Name}} = null;
+            }
+            {{/IsNullable}}
+            {{/IsAssignable}}
+            {{/Properties}}
+        }
+
+        public static IDictionary<string, object?> ToDictionary(this {{TypeName}} instance)
+        {
+            var dictionary = new Dictionary<string, object?>
+            {
+                {{#Configuration.Record.ParameterList}}
+                ["{{Name}}"] = instance.{{Name}},
+                {{/Configuration.Record.ParameterList}}
+                {{#Properties}}
+                ["{{Name}}"] = instance.{{Name}},
+                {{/Properties}}
+            };
+            return dictionary;
+        }
+    }

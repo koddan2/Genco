@@ -13,13 +13,14 @@ public static class CSharpCompilationUnit
     {
         public bool NullableEnable { get; set; } = true;
         public string? FileHeader { get; set; }
+        public bool HasDefaultConstructor => Configuration.HasDefaultConstructor;
     }
 
     public static ViewModel FromConfiguration(GencoConfiguration cfg)
     {
         var viewModel = new ViewModel(
             Configuration: cfg,
-            Namespace: cfg.Namespace.Default(FileResolver.ResolveCsproj(cfg)),
+            Namespace: cfg.Namespace.Default(FileResolver.ResolveNamespace(cfg)),
             TypeName: cfg.Name.Default(FileResolver.ResolveFilename(cfg)),
             TypeSyntax: cfg.Type.Default("record"),
             Usings: cfg.Usings.ToHashSet(),

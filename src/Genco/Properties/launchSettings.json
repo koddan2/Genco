@@ -1,8 +1,12 @@
 {
   "profiles": {
-    "Genco": {
+    "Genco ALL": {
       "commandName": "Project",
-      "commandLineArgs": "$[ProjectSourceRoot]/../Genco.Test/Example/MyModel.toml"
+      "commandLineArgs": "$[ProjectSourceRoot]/../Genco.Test/Example/MySimpleModel.toml $[ProjectSourceRoot]/../Genco.Test/Example/MyMoreComplexModel.toml"
+    },
+    "Genco Simple": {
+      "commandName": "Project",
+      "commandLineArgs": "$[ProjectSourceRoot]/../Genco.Test/Example/MySimpleModel.toml"
     }
   }
 }

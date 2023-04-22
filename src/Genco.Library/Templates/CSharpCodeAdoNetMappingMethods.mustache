@@ -1,2 +1,31 @@
+    public static class {{TypeName}}AdoNetMappingExtensions
+    {
+        public static void AddAllParameters(this {{TypeName}} model, IDbCommand command)
+        {
+            void AddParameter<T>(string name, T value)
+            {
+                var newParameter = command.CreateParameter();
+                newParameter.ParameterName = name;
+                newParameter.Value = value;
+                command.Parameters.Add(newParameter);
+            }
 
-// fail
+            {{#Configuration.Record.ParameterList}}
+            AddParameter("@{{Name}}", model.{{Name}});
+            {{/Configuration.Record.ParameterList}}
+            {{#Properties}}
+            AddParameter("@{{Name}}", model.{{Name}});
+            {{/Properties}}
+        }
+
+        {{#HasDefaultConstructor}}
+        public static {{TypeName}} LoadRecord(IDataRecord record)
+        {
+            var result = new {{TypeName}}();
+            {{#Properties}}
+            result.{{Name}} = ({{TypeSyntax}})record["{{Name}}"];
+            {{/Properties}}
+            return result;
+        }
+        {{/HasDefaultConstructor}}
+    }

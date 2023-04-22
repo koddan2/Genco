@@ -14,20 +14,23 @@ internal class Program
     {
         try
         {
-            if (args.Length > 1)
+            if (int.TryParse(Environment.GetEnvironmentVariable("GENCO_VERBOSITY"), out int v))
             {
-                _verbosity = int.Parse(args[1]);
+                _verbosity = v;
             }
 
-            var inputFileVirtualPath = args[0];
-            var notNormalizedPath = inputFileVirtualPath.Replace("$[ProjectSourceRoot]", ProjectSourceRoot.Lazy.Value);
-            var inputFileFullPath = Path.GetFullPath(notNormalizedPath);
-            if (_verbosity > 0)
+            foreach (var arg in args)
             {
-                Console.WriteLine("Processing: {0}", inputFileFullPath);
-            }
+                var inputFileVirtualPath = arg;
+                var notNormalizedPath = inputFileVirtualPath.Replace("$[ProjectSourceRoot]", ProjectSourceRoot.Lazy.Value);
+                var inputFileFullPath = Path.GetFullPath(notNormalizedPath);
+                if (_verbosity > 0)
+                {
+                    Console.WriteLine("Processing: {0}", inputFileFullPath);
+                }
 
-            GencoProcessor.ProcessFile(inputFileFullPath);
+                GencoProcessor.ProcessFile(inputFileFullPath);
+            }
             return 0;
         }
         catch (Exception exn)

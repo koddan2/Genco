@@ -14,13 +14,14 @@ public static class FileResolver
         var csproj = ResolveCsproj(cfg);
         var csprojDir = Path.GetDirectoryName(csproj).Require();
         var csprojName = Path.GetFileNameWithoutExtension(csproj);
-        var relativePath = Path.GetRelativePath(csprojDir, cfg.PathToConfigurationFile.Require());
+        var relativePathFile = Path.GetRelativePath(csprojDir, cfg.PathToConfigurationFile.Require());
+        var relativePath = Path.GetDirectoryName(relativePathFile).Require();
         string relativePathWithDots = "";
         if (relativePath.Replace(Path.DirectorySeparatorChar, '.') is string withDots && withDots != ".")
         {
             relativePathWithDots = withDots;
         }
-        return $"{csprojName}{relativePathWithDots}";
+        return $"{csprojName}.{relativePathWithDots}";
     }
     internal static string ResolveCsproj(GencoConfiguration cfg)
     {

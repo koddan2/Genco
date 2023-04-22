@@ -28,12 +28,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data;
 using System.ComponentModel.DataAnnotations;
 using RangeAttribute = System.ComponentModel.DataAnnotations.RangeAttribute;
 
 #nullable enable
 
-namespace Genco.Example
+namespace Genco.Test.Example
 {
     public enum Status
     {
@@ -48,7 +49,7 @@ namespace Genco.Example
     /// The tool used to generate this file is called Genco.
     /// </summary>
     
-    public partial record MyModel([property: Required, Range(0, 100)] int Id, bool Important = true)
+    public partial record MyMoreComplexModel([property: Required, Range(0, 100)] int Id, bool Important = true)
     {
         
 
@@ -62,14 +63,14 @@ namespace Genco.Example
         public Guid? ExternalReference { get; set; }
     }
 
-    public static class MyModelDictionaryMappingExtensions
+    public static class MyMoreComplexModelDictionaryMappingExtensions
     {
 
-        public static void PopulateFromDictionary(this MyModel instance, IDictionary<string, object?> dictionary)
+        public static void PopulateFromDictionary(this MyMoreComplexModel instance, IDictionary<string, object?> dictionary)
         {
             if (dictionary.TryGetValue("Status", out var Status_Boxed))
             {
-                if (Status_Boxed is Status)
+                if (Status_Boxed is not null)
                 {
                     instance.Status = (Status)Status_Boxed;
                 }
@@ -84,14 +85,7 @@ namespace Genco.Example
             }
             if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_Boxed))
             {
-                if (ExternalReference_Boxed is Guid?)
-                {
-                    instance.ExternalReference = (Guid?)ExternalReference_Boxed;
-                }
-                else
-                {
-                    instance.ExternalReference = null;
-                }
+                instance.ExternalReference = (Guid?)ExternalReference_Boxed;
             }
             else
             {
@@ -99,7 +93,7 @@ namespace Genco.Example
             }
         }
 
-        public static IDictionary<string, object?> ToDictionary(this MyModel instance)
+        public static IDictionary<string, object?> ToDictionary(this MyMoreComplexModel instance)
         {
             var dictionary = new Dictionary<string, object?>
             {
@@ -113,4 +107,24 @@ namespace Genco.Example
             return dictionary;
         }
     }
-}
+    public static class MyMoreComplexModelAdoNetMappingExtensions
+    {
+        public static void AddAllParameters(this MyMoreComplexModel model, IDbCommand command)
+        {
+            void AddParameter<T>(string name, T value)
+            {
+                var newParameter = command.CreateParameter();
+                newParameter.ParameterName = name;
+                newParameter.Value = value;
+                command.Parameters.Add(newParameter);
+            }
+
+            AddParameter("@Id", model.Id);
+            AddParameter("@Important", model.Important);
+            AddParameter("@Name", model.Name);
+            AddParameter("@CreatedAt", model.CreatedAt);
+            AddParameter("@Status", model.Status);
+            AddParameter("@ExternalReference", model.ExternalReference);
+        }
+
+    }}

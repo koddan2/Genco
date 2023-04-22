@@ -3,7 +3,9 @@
         {{#HasDefaultConstructor}}
         public static {{TypeName}} FromDictionary(this IDictionary<string, object?> dictionary)
         {
-            return new {{TypeName}}();
+            var result = new {{TypeName}}();
+            PopulateFromDictionary(result, dictionary);
+            return result;
         }
         {{/HasDefaultConstructor}}
 
@@ -13,21 +15,18 @@
             {{#IsAssignable}}
             if (dictionary.TryGetValue("{{Name}}", out var {{Name}}_Boxed))
             {
-                if ({{Name}}_Boxed is {{TypeSyntax}})
+                {{#IsNotNull}}
+                if ({{Name}}_Boxed is not null)
                 {
                     instance.{{Name}} = ({{TypeSyntax}}){{Name}}_Boxed;
                 }
-                {{#IsNotNull}}
                 else
                 {
                     throw new ArgumentException("The value for the key '{{Name}}' in the supplied dictionary is null", nameof(dictionary));
                 }
                 {{/IsNotNull}}
                 {{#IsNullable}}
-                else
-                {
-                    instance.{{Name}} = null;
-                }
+                instance.{{Name}} = ({{TypeSyntax}}){{Name}}_Boxed;
                 {{/IsNullable}}
             }
             {{#IsNotNull}}

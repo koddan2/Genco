@@ -15,6 +15,7 @@ public static class Renderer
                 var dict = new Dictionary<string, string>
                 {
                     ["CSharpCodeDictionaryMappingMethods"] = LoadTemplate("CSharpCodeDictionaryMappingMethods"),
+                    ["CSharpCodeAdoNetMappingMethods"] = LoadTemplate("CSharpCodeAdoNetMappingMethods"),
                 };
                 settings.SetPartialTemplateLoader(new DictionaryLoader(dict));
             })

@@ -8,9 +8,11 @@ Namespace = "Genco.Example"
 # (optional) can be inferred from the .toml filename without extension
 Name = "MyModel"
 
-# can be "class", "struct", "record", "record struct", and "readonly record struct"
-# defaults to record
-Type = "readonly record struct"
+# can be "class", "struct", "record", "record struct", "readonly record struct"
+# but also, if the type should be abstract or partial, it can be added here too,
+# e.g. "abstract class" or "partial record" &c.
+# defaults to "record"
+Type = "partial record"
 
 Usings = [
     # (optional) default usings
@@ -19,31 +21,38 @@ Usings = [
     "System.Linq",
 
     # (optional) custom usings
-    "Genco.Library"
+    "System.ComponentModel.DataAnnotations",
 ]
 
+[Generate.Mappers]
 # generate mapping methods that convert an instance of the model
 # to and from an IDictionary<string, object?>
-# Generate.Mappers.Dictionary = true
+Dictionary = true
 # generate mapping methods that convert an instance of the model
 # to and from a System.Data.DataTable
-# Generate.Mappers.AdoNet = true
+AdoNet = true
 
-# the thought is that we can define several DTO objects to generate types and mappers for
+# the idea is that we can define several DTO objects to generate types and mappers for
 # that has a subset of the main model's properties
 #[Generate.DTO]
 
-# [RecordParameterList]
-# Id = {Type = "int", Attributes = "Required, Range(0, 100)"}
+[Record]
+ParameterList = [
+    { Name = "Id", Type = "int", Attributes = [
+        "Required",
+        "Range(0, 100)",
+    ] },
+    { Name = "Important", Type = "bool", DefaultValue = "true" },
+]
 
 #[Constructor]
 
-# [Properties.Name]
-# Type = "string?"
-# Setter = "init"
-# Attributes = "MaxLength(0xff)"
+[Properties.Name]
+Type = "string?"
+Setter = "init"
+Attributes = "MaxLength(0xff)"
 
-# [Properties.CreatedAt]
-# Type = "DateTime"
-# #Setter
-# DefaultValue = "DateTime.Now"
+[Properties.CreatedAt]
+Type = "DateTime"
+#Setter
+DefaultValue = "DateTime.Now"

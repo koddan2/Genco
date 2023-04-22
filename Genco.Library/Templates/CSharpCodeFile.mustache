@@ -1,16 +1,26 @@
 {{& FileHeader}}
+{{#Usings}}
+using {{.}};
+{{/Usings}}
+
+{{#NullableEnable}}
+#nullable enable
+{{/NullableEnable}}
+
 namespace {{Namespace}}
 {
     /// <summary>
     /// This is a generated class.
     /// The tool used to generate this file is called Genco.
     /// </summary>
+    {{#Attributes}}[{{.}}]{{/Attributes}}
     public {{TypeSyntax}} {{TypeName}}{{RecordParameterList}}
     {
         {{Constructor}}
 
         {{#Properties}}
-        public {{TypeSyntax}} {{Name}} { get; {{SetterSyntax}} }
+        {{#Attributes}}[{{.}}]{{/Attributes}}
+        public {{TypeSyntax}} {{Name}} { get;{{SetterSyntax}} }{{DefaultValueSyntax}}
         {{/Properties}}
     }
 }

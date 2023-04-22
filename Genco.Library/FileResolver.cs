@@ -43,25 +43,3 @@ public static class FileResolver
         throw new ArgumentException("Unable to resolve project base directory");
     }
 }
-public static class CSharpCompilationUnit
-{
-    public record ViewModel(string Namespace, string TypeName, string TypeSyntax)
-    {
-        public string? FileHeader { get; set; }
-    }
-
-    public static ViewModel FromConfiguration(GencoConfiguration cfg)
-    {
-        var viewModel = new ViewModel(
-            Namespace: cfg.Namespace.Default(FileResolver.ResolveCsproj(cfg)),
-            TypeName: cfg.Name.Default(FileResolver.ResolveFilename(cfg)),
-            TypeSyntax: cfg.Type.Default("record"));
-
-        if (cfg.FileHeader is not null)
-        {
-            viewModel.FileHeader = cfg.FileHeader;
-        }
-
-        return viewModel;
-    }
-}

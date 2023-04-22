@@ -1,0 +1,16 @@
+{{& FileHeader}}
+namespace {{Namespace}}
+{
+    /// <summary>
+    /// This is a generated class.
+    /// The tool used to generate this file is called Genco.
+    /// </summary>
+    public {{TypeSyntax}} {{TypeName}}{{RecordParameterList}}
+    {
+        {{Constructor}}
+
+        {{#Properties}}
+        public {{TypeSyntax}} {{Name}} { get; {{SetterSyntax}} }
+        {{/Properties}}
+    }
+}

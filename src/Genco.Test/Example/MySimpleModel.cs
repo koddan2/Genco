@@ -33,80 +33,53 @@ namespace Genco.Test.Example
         public Status Status { get; set; } = Status.Ok;
         
         public Guid? ExternalReference { get; set; }
+
+        public static MySimpleModel FromDictionary(IDictionary<string, object?> dictionary)
+        {
+            var result = new MySimpleModel();
+            result.PopulateFromDictionary(dictionary);
+            return result;
+        }
     }
 
     public static class MySimpleModelDictionaryMappingExtensions
     {
-        public static MySimpleModel FromDictionary(this IDictionary<string, object?> dictionary)
-        {
-            var result = new MySimpleModel();
-            PopulateFromDictionary(result, dictionary);
-            return result;
-        }
-
         public static void PopulateFromDictionary(this MySimpleModel instance, IDictionary<string, object?> dictionary)
         {
+            // Id
             if (dictionary.TryGetValue("Id", out var Id_Boxed))
-            {
                 if (Id_Boxed is not null)
-                {
                     instance.Id = (int)Id_Boxed;
-                }
                 else
-                {
                     throw new ArgumentException("The value for the key 'Id' in the supplied dictionary is null", nameof(dictionary));
-                }
-            }
             else
-            {
                 throw new KeyNotFoundException("The key 'Id' was not present in the supplied dictionary");
-            }
+            // Name
             if (dictionary.TryGetValue("Name", out var Name_Boxed))
-            {
                 instance.Name = (string?)Name_Boxed;
-            }
             else
-            {
                 instance.Name = null;
-            }
+            // CreatedAt
             if (dictionary.TryGetValue("CreatedAt", out var CreatedAt_Boxed))
-            {
                 if (CreatedAt_Boxed is not null)
-                {
                     instance.CreatedAt = (DateTime)CreatedAt_Boxed;
-                }
                 else
-                {
                     throw new ArgumentException("The value for the key 'CreatedAt' in the supplied dictionary is null", nameof(dictionary));
-                }
-            }
             else
-            {
                 throw new KeyNotFoundException("The key 'CreatedAt' was not present in the supplied dictionary");
-            }
+            // Status
             if (dictionary.TryGetValue("Status", out var Status_Boxed))
-            {
                 if (Status_Boxed is not null)
-                {
                     instance.Status = (Status)Status_Boxed;
-                }
                 else
-                {
                     throw new ArgumentException("The value for the key 'Status' in the supplied dictionary is null", nameof(dictionary));
-                }
-            }
             else
-            {
                 throw new KeyNotFoundException("The key 'Status' was not present in the supplied dictionary");
-            }
+            // ExternalReference
             if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_Boxed))
-            {
                 instance.ExternalReference = (Guid?)ExternalReference_Boxed;
-            }
             else
-            {
                 instance.ExternalReference = null;
-            }
         }
 
         public static IDictionary<string, object?> ToDictionary(this MySimpleModel instance)

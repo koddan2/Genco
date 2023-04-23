@@ -23,6 +23,15 @@ namespace {{Namespace}}
         {{#Attributes}}[{{.}}]{{/Attributes}}
         public {{TypeSyntax}} {{Name}} { get;{{SetterSyntax}} }{{DefaultValueSyntax}}
         {{/Properties}}
+
+        {{#HasDefaultConstructor}}
+        public static {{TypeName}} FromDictionary(IDictionary<string, object?> dictionary)
+        {
+            var result = new {{TypeName}}();
+            result.PopulateFromDictionary(dictionary);
+            return result;
+        }
+        {{/HasDefaultConstructor}}
     }
 
 {{#Configuration.Generate.Mappers.Dictionary}}

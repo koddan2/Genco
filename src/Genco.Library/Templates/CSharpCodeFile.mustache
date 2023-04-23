@@ -1,7 +1,7 @@
 {{& FileHeader}}
-{{#Usings}}
-using {{.}};
-{{/Usings}}
+{{#Usings.Syntaxes}}
+{{.}}
+{{/Usings.Syntaxes}}
 
 {{#NullableEnable}}
 #nullable enable
@@ -14,20 +14,23 @@ namespace {{Namespace}}
     /// This is a generated class.
     /// The tool used to generate this file is called Genco.
     /// </summary>
-    {{#Attributes}}[{{.}}]{{/Attributes}}
-    public {{TypeSyntax}} {{TypeName}}{{RecordParameterList}}
+    {{#ModelAttributes}}
+    {{Syntax}}
+    {{/ModelAttributes}}
+    public {{ModelTypeSyntax}} {{ModelTypeName}}{{Record.ParameterListSyntax}}
     {
-        {{Constructor}}
-
+        {{#Constructor}}
+        {{/Constructor}}
         {{#Properties}}
-        {{#Attributes}}[{{.}}]{{/Attributes}}
-        public {{TypeSyntax}} {{Name}} { get;{{SetterSyntax}} }{{DefaultValueSyntax}}
-        {{/Properties}}
+        // {{PropertyName}}
+        {{PropertyAttributeSyntax}}
+        public {{PropertyTypeSyntax}} {{PropertyName}} { get;{{PropertySetterSyntax}} }{{PropertyDefaultValueSyntax}}
 
+        {{/Properties}}
         {{#HasDefaultConstructor}}
-        public static {{TypeName}} FromDictionary(IDictionary<string, object?> dictionary)
+        public static {{ModelTypeName}} FromDictionary(IDictionary<string, object?> dictionary)
         {
-            var result = new {{TypeName}}();
+            var result = new {{ModelTypeName}}();
             result.PopulateFromDictionary(dictionary);
             return result;
         }

@@ -1,6 +1,6 @@
-    public static class {{TypeName}}AdoNetMappingExtensions
+    public static class {{ModelTypeName}}AdoNetMappingExtensions
     {
-        public static void AddAllParameters(this {{TypeName}} model, IDbCommand command)
+        public static void AddAllParameters(this {{ModelTypeName}} model, IDbCommand command)
         {
             void AddParameter<T>(string name, T value)
             {
@@ -10,21 +10,24 @@
                 command.Parameters.Add(newParameter);
             }
 
-            {{#Configuration.Record.ParameterList}}
-            AddParameter("@{{Name}}", model.{{Name}});
-            {{/Configuration.Record.ParameterList}}
+            {{#Record.Parameters}}
+            AddParameter("@{{ParameterName}}", model.{{ParameterName}});
+            {{/Record.Parameters}}
             {{#Properties}}
-            AddParameter("@{{Name}}", model.{{Name}});
+            AddParameter("@{{PropertyName}}", model.{{PropertyName}});
             {{/Properties}}
         }
 
         {{#HasDefaultConstructor}}
-        public static {{TypeName}} LoadRecord(IDataRecord record)
+        public static {{ModelTypeName}} LoadRecord(IDataRecord record)
         {
-            var result = new {{TypeName}}();
+            var result = new {{ModelTypeName}}();
             {{#Properties}}
-            result.{{Name}} = ({{TypeSyntax}})record["{{Name}}"];
+            // {{PropertyName}}
+            result.{{PropertyName}} = record["{{PropertyName}}"] is object {{PropertyName}}_Boxed
+                ? ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed : default;
             {{/Properties}}
+            
             return result;
         }
         {{/HasDefaultConstructor}}

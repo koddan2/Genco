@@ -37,25 +37,30 @@ AdoNet = true
 
 #[Constructor]
 
-[Properties.Id]
+[[Properties]]
+Name = "Id"
 Type = "int"
 Setter = "set"
 
-[Properties.Name]
+[[Properties]]
+Name = "Name"
 Type = "string?"
 Setter = "set"
 Attributes = "MaxLength(0xff)"
 
-[Properties.CreatedAt]
+[[Properties]]
+Name = "CreatedAt"
 Type = "DateTime"
 Setter = "set"
 DefaultValue = "DateTime.Now"
 
-[Properties.Status]
+[[Properties]]
+Name = "Status"
 Type = "Status"
 Setter = "set"
 DefaultValue = "Status.Ok"
 
-[Properties.ExternalReference]
+[[Properties]]
+Name = "ExternalReference"
 Type = "Guid?"
 Setter = "set"

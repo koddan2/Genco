@@ -8,6 +8,7 @@
     <ItemGroup>
         <PackageReference Include="Tomlyn" Version="0.16.2" />
         <PackageReference Include="Stubble.Core" Version="1.10.8" />
+        <PackageReference Include="CSharpier.Core" Version="0.23.0" />
     </ItemGroup>
     <ItemGroup>
         <None Update="Templates\*.mustache">

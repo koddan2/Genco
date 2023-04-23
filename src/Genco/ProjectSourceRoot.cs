@@ -18,8 +18,9 @@ internal static class ProjectSourceRoot
         return directoryPath ?? throw new ApplicationException("Null valued path");
     }
 
-    public static string GetSourceFilePathName([CallerFilePath] string? callerFilePath = null) //
-        => callerFilePath
-            ?? throw new InvalidOperationException(nameof(callerFilePath));
+    public static string GetSourceFilePathName(
+        [CallerFilePath] string? callerFilePath = null
+    ) //
+        => callerFilePath ?? throw new InvalidOperationException(nameof(callerFilePath));
 }
 #endif

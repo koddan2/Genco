@@ -22,6 +22,13 @@ Usings = [
     "RangeAttribute = System.ComponentModel.DataAnnotations.RangeAttribute"
 ]
 
+CustomCode = """
+public static class SomeExtraStuff
+{
+    public static readonly int Value = 1;
+}
+"""
+
 [Generate.Mappers]
 # generate mapping methods that convert an instance of the model
 # to and from an IDictionary<string, object?>
@@ -35,7 +42,12 @@ AdoNet = true
 # that has a subset of the main model's properties
 #[Generate.DTO]
 
-#[Constructor]
+[[Constructors]]
+ParameterList = []
+CustomCode = """
+Console.WriteLine("Testing");
+System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
+"""
 
 [[Properties]]
 Name = "Id"

@@ -5,6 +5,7 @@ namespace Genco;
 internal class Program
 {
     private int _verbosity = 1;
+
     static int Main(string[] args)
     {
         return new Program().Run(args);
@@ -22,7 +23,10 @@ internal class Program
             foreach (var arg in args)
             {
                 var inputFileVirtualPath = arg;
-                var notNormalizedPath = inputFileVirtualPath.Replace("$[ProjectSourceRoot]", ProjectSourceRoot.Lazy.Value);
+                var notNormalizedPath = inputFileVirtualPath.Replace(
+                    "$[ProjectSourceRoot]",
+                    ProjectSourceRoot.Lazy.Value
+                );
                 var inputFileFullPath = Path.GetFullPath(notNormalizedPath);
                 if (_verbosity > 0)
                 {

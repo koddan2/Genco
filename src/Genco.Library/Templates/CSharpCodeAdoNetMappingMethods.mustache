@@ -1,34 +1,24 @@
     public static class {{ModelTypeName}}AdoNetMappingExtensions
     {
-        public static void AddAllParameters(this {{ModelTypeName}} model, IDbCommand command)
+        public static void AddAllParameters(this {{ModelTypeName}} model, IDbCommand command, string[]? skipProperties = null)
         {
-            void AddParameter<T>(string name, T value)
+            void AddParameter<T>(string parameterName, T value, string name)
             {
+                if (skipProperties?.Contains(name) is true)
+                {
+                    return;
+                }
                 var newParameter = command.CreateParameter();
-                newParameter.ParameterName = name;
+                newParameter.ParameterName = parameterName;
                 newParameter.Value = value;
                 command.Parameters.Add(newParameter);
             }
 
             {{#Record.Parameters}}
-            AddParameter("@{{ParameterName}}", model.{{ParameterName}});
+            AddParameter("@{{ParameterName}}", model.{{ParameterName}}, "{{ParameterName}}");
             {{/Record.Parameters}}
             {{#Properties}}
-            AddParameter("@{{PropertyName}}", model.{{PropertyName}});
+            AddParameter("@{{PropertyName}}", model.{{PropertyName}}, "{{PropertyName}}");
             {{/Properties}}
         }
-
-        {{#HasDefaultConstructor}}
-        public static {{ModelTypeName}} LoadRecord(IDataRecord record)
-        {
-            var result = new {{ModelTypeName}}();
-            {{#Properties}}
-            // {{PropertyName}}
-            result.{{PropertyName}} = record["{{PropertyName}}"] is object {{PropertyName}}_Boxed
-                ? ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed : default;
-            {{/Properties}}
-            
-            return result;
-        }
-        {{/HasDefaultConstructor}}
     }

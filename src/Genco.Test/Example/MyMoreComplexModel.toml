@@ -30,13 +30,13 @@ Usings = [
 ]
 
 CustomCode = """
-    public enum Status
-    {
-        Unknown,
-        Ok,
-        Intermediate,
-        Problematic,
-    }
+public enum Status
+{
+    Unknown,
+    Ok,
+    Intermediate,
+    Problematic,
+}
 """
 
 [Generate.Mappers]

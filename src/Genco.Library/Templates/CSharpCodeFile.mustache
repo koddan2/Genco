@@ -19,23 +19,65 @@ namespace {{Namespace}}
     {{/ModelAttributes}}
     public {{ModelTypeSyntax}} {{ModelTypeName}}{{Record.ParameterListSyntax}}
     {
-        {{#Constructor}}
-        {{/Constructor}}
+        {{#Constructors}}
+        public {{ModelTypeName}}{{ParameterListSyntax}}
+        {
+            {{& CustomCodeSyntax}}
+        }
+        {{/Constructors}}
         {{#Properties}}
         // {{PropertyName}}
         {{PropertyAttributeSyntax}}
         public {{PropertyTypeSyntax}} {{PropertyName}} { get;{{PropertySetterSyntax}} }{{PropertyDefaultValueSyntax}}
 
         {{/Properties}}
+
         {{#HasDefaultConstructor}}
+        {{#Configuration.Generate.Mappers.Dictionary}}
         public static {{ModelTypeName}} FromDictionary(IDictionary<string, object?> dictionary)
         {
             var result = new {{ModelTypeName}}();
             result.PopulateFromDictionary(dictionary);
             return result;
         }
+        {{/Configuration.Generate.Mappers.Dictionary}}
+
+        {{#Configuration.Generate.Mappers.AdoNet}}
+        public static {{ModelTypeName}} LoadRecord(IDataRecord record)
+        {
+            var result = new {{ModelTypeName}}();
+            {{#Properties}}
+            // {{PropertyName}}
+            if (record["{{PropertyName}}"] is object {{PropertyName}}_Boxed && {{PropertyName}}_Boxed is not null)
+            {
+#if DEBUG
+                var type = {{PropertyName}}_Boxed.GetType();
+                var value = {{PropertyName}}_Boxed;
+                System.Diagnostics.Debug.Assert(
+                    {{ModelTypeName}}Meta.Property_{{PropertyName}}.PropertyType.IsAssignableFrom(type),
+                    $"record['{{PropertyName}}'] of type '{type.FullName}' (Value: {value}) is not assignable to {{ModelTypeName}}.{{PropertyName}}");
+#endif
+                result.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed;
+            }
+            {{/Properties}}
+            
+            return result;
+        }
+        {{/Configuration.Generate.Mappers.AdoNet}}
         {{/HasDefaultConstructor}}
     }
+
+#if DEBUG
+    internal static class {{ModelTypeName}}Meta
+    {
+        internal static readonly Type ModelType = typeof(MySimpleModel);
+        {{#Properties}}
+        internal static readonly System.Reflection.PropertyInfo Property_{{PropertyName}} =
+            ModelType.GetProperty("{{PropertyName}}")
+            ?? throw new InvalidOperationException("Could not find property '{{PropertyName}}' on {{ModelTypeName}}");
+        {{/Properties}}
+    }
+#endif
 
 {{#Configuration.Generate.Mappers.Dictionary}}
 {{>CSharpCodeDictionaryMappingMethods}}
@@ -44,4 +86,5 @@ namespace {{Namespace}}
 {{#Configuration.Generate.Mappers.AdoNet}}
 {{>CSharpCodeAdoNetMappingMethods}}
 {{/Configuration.Generate.Mappers.AdoNet}}
+
 }

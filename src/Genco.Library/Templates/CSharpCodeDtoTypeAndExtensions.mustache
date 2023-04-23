@@ -1,0 +1,27 @@
+{{#Dtos}}
+    public {{ModelTypeSyntax}} {{DtoNameSyntax}}
+    {
+        {{#Properties}}
+        public {{PropertyTypeSyntax}} {{PropertyName}} { get; set; }
+        {{/Properties}}
+    }
+    public static class {{DtoNameSyntax}}MappingExtensions
+    {
+        public static {{DtoNameSyntax}} To{{Suffix}}(this {{ModelTypeName}} instance)
+        {
+            var result = new {{DtoNameSyntax}}();
+            {{#Properties}}
+            result.{{PropertyName}} = instance.{{PropertyName}};
+            {{/Properties}}
+            return result;
+        }
+        public static {{ModelTypeName}} ToModel(this {{DtoNameSyntax}} dto)
+        {
+            var result = new {{ModelTypeName}}();
+            {{#Properties}}
+            result.{{PropertyName}} = dto.{{PropertyName}};
+            {{/Properties}}
+            return result;
+        }
+    }
+{{/Dtos}}

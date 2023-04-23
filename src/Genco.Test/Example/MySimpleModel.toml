@@ -40,7 +40,10 @@ AdoNet = true
 
 # the idea is that we can define several DTO objects to generate types and mappers for
 # that has a subset of the main model's properties
-#[Generate.DTO]
+[[Generate.DTO]]
+Suffix = "Dto"
+AllProperties = true
+GenerateMappers = true
 
 [[Constructors]]
 ParameterList = []
@@ -53,6 +56,7 @@ System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
 Name = "Id"
 Type = "int"
 Setter = "set"
+Attributes = "Range(0x1000, 0xffff)"
 
 [[Properties]]
 Name = "Name"

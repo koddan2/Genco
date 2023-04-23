@@ -1,4 +1,27 @@
-﻿namespace Genco.Library;
+﻿using System.Text;
+
+namespace Genco.Library;
+
+public static class Indent
+{
+    public static string Spaces(string multilineString, int countSpaces)
+    {
+        var sb = new StringBuilder();
+        var reader = new StringReader(multilineString);
+        var spaces = string.Join(' ', Enumerable.Range(0, countSpaces + 1).Select(_ => ""));
+        while (true)
+        {
+            var line = reader.ReadLine();
+            if (line == null)
+            {
+                break;
+            }
+
+            sb.Append(spaces).AppendLine(line);
+        }
+        return sb.ToString();
+    }
+}
 
 public static class CSharpCompilationUnit
 {
@@ -44,10 +67,11 @@ public static class CSharpCompilationUnit
 
     public record ConstructorViewModel(GencoConfigurationConstructorElement Element)
     {
-        public IEnumerable<InvocationParameterViewModel> Parameters
-            => Element.ParameterList.Select(x => x.ToViewModel());
+        public IEnumerable<InvocationParameterViewModel> Parameters =>
+            Element.ParameterList.Select(x => x.ToViewModel());
         public string? ParameterListSyntax => FormatParameterList(Element.ParameterList);
-        public string? CustomCodeSyntax => Element.CustomCode;
+        public string? CustomCodeSyntax =>
+            Element.CustomCode is null ? null : Indent.Spaces(Element.CustomCode, 12);
     }
 
     public static ConstructorViewModel ToViewModel(
@@ -67,11 +91,15 @@ public static class CSharpCompilationUnit
         string ModelTypeSyntax,
         RecordViewModel? Record,
         IEnumerable<PropertyViewModel> Properties,
-        IEnumerable<ConstructorViewModel> Constructors
+        IEnumerable<ConstructorViewModel> Constructors,
+        IEnumerable<DtoViewModel> Dtos
     )
     {
         public bool NullableEnable { get; set; } = true;
         public string? FileHeader { get; set; }
+
+        public string? CustomCodeSyntax =>
+            Configuration.CustomCode is null ? null : Indent.Spaces(Configuration.CustomCode, 4);
 
         private bool HasRecord => Record is not null;
         public bool HasDefaultConstructor =>
@@ -79,17 +107,30 @@ public static class CSharpCompilationUnit
             && (!Constructors.Any() || Constructors.Any(ctor => !ctor.Parameters.Any()));
     }
 
+    public record DtoViewModel(GencoConfigurationGenerateDtoElement Element, string ModelTypeName)
+    {
+        public string Suffix => Element.Suffix;
+        public string DtoNameSyntax => $"{ModelTypeName}{Element.Suffix}";
+    }
+
+    public static DtoViewModel ToViewModel(
+        this GencoConfigurationGenerateDtoElement element,
+        string modelTypeName
+    ) => new(element, modelTypeName);
+
     public static CodeFileViewModel FromConfiguration(GencoConfiguration cfg)
     {
+        string modelTypeName = cfg.Name.Default(FileResolver.ResolveFilename(cfg));
         var viewModel = new CodeFileViewModel(
             Configuration: cfg,
             Usings: new UsingsViewModel(cfg.Usings.ToHashSet()),
             Namespace: cfg.Namespace.Default(FileResolver.ResolveNamespace(cfg)),
-            ModelTypeName: cfg.Name.Default(FileResolver.ResolveFilename(cfg)),
+            ModelTypeName: modelTypeName,
             ModelTypeSyntax: cfg.Type.Default("record"),
             Record: cfg.Record?.ToViewModel(),
             Properties: cfg.Properties.Select(x => x.ToViewModel()),
-            Constructors: cfg.Constructors.Select(x => x.ToViewModel())
+            Constructors: cfg.Constructors.Select(x => x.ToViewModel()),
+            Dtos: cfg.Generate.DTO.Select(x => x.ToViewModel(modelTypeName))
         );
 
         if (cfg.FileHeader is not null)

@@ -10,10 +10,10 @@ using RangeAttribute = System.ComponentModel.DataAnnotations.RangeAttribute;
 #nullable enable
 namespace Genco.Test.Example
 {
-public static class SomeExtraStuff
-{
-    public static readonly int Value = 1;
-}
+    public static class SomeExtraStuff
+    {
+        public static readonly int Value = 1;
+    }
     /// <summary>
     /// This is a generated class.
     /// The tool used to generate this file is called Genco.
@@ -23,9 +23,10 @@ public static class SomeExtraStuff
         public MySimpleModel()
         {
             Console.WriteLine("Testing");
-System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
+            System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
         }
         // Id
+        [Range(0x1000, 0xffff)]
         public int Id { get; set; }
         // Name
         [MaxLength(0xff)]
@@ -250,6 +251,37 @@ System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
             AddParameter("@CreatedAt", model.CreatedAt, "CreatedAt");
             AddParameter("@Status", model.Status, "Status");
             AddParameter("@ExternalReference", model.ExternalReference, "ExternalReference");
+        }
+    }
+    public partial record MySimpleModelDto
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public Status Status { get; set; }
+        public Guid? ExternalReference { get; set; }
+    }
+    public static class MySimpleModelDtoMappingExtensions
+    {
+        public static MySimpleModelDto ToDto(this MySimpleModel instance)
+        {
+            var result = new MySimpleModelDto();
+            result.Id = instance.Id;
+            result.Name = instance.Name;
+            result.CreatedAt = instance.CreatedAt;
+            result.Status = instance.Status;
+            result.ExternalReference = instance.ExternalReference;
+            return result;
+        }
+        public static MySimpleModel ToModel(this MySimpleModelDto dto)
+        {
+            var result = new MySimpleModel();
+            result.Id = dto.Id;
+            result.Name = dto.Name;
+            result.CreatedAt = dto.CreatedAt;
+            result.Status = dto.Status;
+            result.ExternalReference = dto.ExternalReference;
+            return result;
         }
     }
 }

@@ -9,7 +9,7 @@
 
 namespace {{Namespace}}
 {
-{{& Configuration.CustomCode}}
+{{& CustomCodeSyntax}}
     /// <summary>
     /// This is a generated class.
     /// The tool used to generate this file is called Genco.
@@ -22,14 +22,13 @@ namespace {{Namespace}}
         {{#Constructors}}
         public {{ModelTypeName}}{{ParameterListSyntax}}
         {
-            {{& CustomCodeSyntax}}
+{{& CustomCodeSyntax}}
         }
         {{/Constructors}}
         {{#Properties}}
         // {{PropertyName}}
         {{PropertyAttributeSyntax}}
         public {{PropertyTypeSyntax}} {{PropertyName}} { get;{{PropertySetterSyntax}} }{{PropertyDefaultValueSyntax}}
-
         {{/Properties}}
 
         {{#HasDefaultConstructor}}
@@ -87,4 +86,5 @@ namespace {{Namespace}}
 {{>CSharpCodeAdoNetMappingMethods}}
 {{/Configuration.Generate.Mappers.AdoNet}}
 
+{{>CSharpCodeDtoTypeAndExtensions}}
 }

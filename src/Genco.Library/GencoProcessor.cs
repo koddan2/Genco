@@ -9,10 +9,7 @@ public static class GencoProcessor
     public static void ProcessFile(string pathToTomlFile)
     {
         var tomlText = File.ReadAllText(pathToTomlFile);
-        TomlModelOptions tomlModelOptions = new()
-        {
-            ConvertPropertyName = s => s,
-        };
+        TomlModelOptions tomlModelOptions = new() { ConvertPropertyName = s => s, };
         var cfg = Toml.ToModel<GencoConfiguration>(tomlText, options: tomlModelOptions);
         cfg.PathToConfigurationFile = pathToTomlFile;
         var viewModel = CSharpCompilationUnit.FromConfiguration(cfg);
@@ -24,7 +21,9 @@ public static class GencoProcessor
         var formattedResult = CodeFormatter.Format(result.Code);
         if (formattedResult.CompilationErrors.Any())
         {
-            throw new InvalidOperationException(formattedResult.CompilationErrors.First().GetMessage());
+            throw new InvalidOperationException(
+                formattedResult.CompilationErrors.First().GetMessage()
+            );
         }
         var cleanResult = CleanWhitespace(formattedResult.Code);
         File.WriteAllText(fullPathToFile, cleanResult);

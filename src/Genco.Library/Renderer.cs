@@ -12,15 +12,11 @@ public static class Renderer
         var stubble = new StubbleBuilder()
             .Configure(settings =>
             {
-                var dict = new Dictionary<string, string>
-                {
-                    ["CSharpCodeDictionaryMappingMethods"] = LoadTemplate(
-                        "CSharpCodeDictionaryMappingMethods"
-                    ),
-                    ["CSharpCodeAdoNetMappingMethods"] = LoadTemplate(
-                        "CSharpCodeAdoNetMappingMethods"
-                    ),
-                };
+                var dict = new Dictionary<string, string>();
+                void HelperLoadTemplate(string name) => dict.Add(name, LoadTemplate(name));
+                HelperLoadTemplate("CSharpCodeDictionaryMappingMethods");
+                HelperLoadTemplate("CSharpCodeAdoNetMappingMethods");
+                HelperLoadTemplate("CSharpCodeDtoTypeAndExtensions");
                 settings.SetPartialTemplateLoader(new DictionaryLoader(dict));
             })
             .Build();

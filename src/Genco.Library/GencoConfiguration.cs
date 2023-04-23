@@ -56,4 +56,13 @@ public record GencoConfigurationGenerateElement
 {
     public GencoConfigurationGenerateMappersElement Mappers { get; set; } =
         new GencoConfigurationGenerateMappersElement();
+
+    public List<GencoConfigurationGenerateDtoElement> DTO { get; set; } = new();
+}
+
+public record GencoConfigurationGenerateDtoElement
+{
+    public string Suffix { get; set; }
+    public bool AllProperties { get; set; } = true;
+    public bool GenerateMappers { get; set; } = true;
 }

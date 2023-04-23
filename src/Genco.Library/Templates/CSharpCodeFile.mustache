@@ -47,16 +47,16 @@ namespace {{Namespace}}
             var result = new {{ModelTypeName}}();
             {{#Properties}}
             // {{PropertyName}}
-            if (record["{{PropertyName}}"] is object {{PropertyName}}_Boxed && {{PropertyName}}_Boxed is not null)
+            if (record["{{PropertyName}}"] is object {{PropertyName}}_AsObj && {{PropertyName}}_AsObj is not null)
             {
 #if DEBUG
-                var type = {{PropertyName}}_Boxed.GetType();
-                var value = {{PropertyName}}_Boxed;
+                var type = {{PropertyName}}_AsObj.GetType();
+                var value = {{PropertyName}}_AsObj;
                 System.Diagnostics.Debug.Assert(
                     {{ModelTypeName}}Meta.Property_{{PropertyName}}.PropertyType.IsAssignableFrom(type),
                     $"record['{{PropertyName}}'] of type '{type.FullName}' (Value: {value}) is not assignable to {{ModelTypeName}}.{{PropertyName}}");
 #endif
-                result.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed;
+                result.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
             }
             {{/Properties}}
             

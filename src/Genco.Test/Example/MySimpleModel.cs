@@ -47,64 +47,64 @@ namespace Genco.Test.Example
         {
             var result = new MySimpleModel();
             // Id
-            if (record["Id"] is object Id_Boxed && Id_Boxed is not null)
+            if (record["Id"] is object Id_AsObj && Id_AsObj is not null)
             {
 #if DEBUG
-                var type = Id_Boxed.GetType();
-                var value = Id_Boxed;
+                var type = Id_AsObj.GetType();
+                var value = Id_AsObj;
                 System.Diagnostics.Debug.Assert(
                     MySimpleModelMeta.Property_Id.PropertyType.IsAssignableFrom(type),
                     $"record['Id'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Id");
 #endif
-                result.Id = (int)Id_Boxed;
+                result.Id = (int)Id_AsObj;
             }
             // Name
-            if (record["Name"] is object Name_Boxed && Name_Boxed is not null)
+            if (record["Name"] is object Name_AsObj && Name_AsObj is not null)
             {
 #if DEBUG
-                var type = Name_Boxed.GetType();
-                var value = Name_Boxed;
+                var type = Name_AsObj.GetType();
+                var value = Name_AsObj;
                 System.Diagnostics.Debug.Assert(
                     MySimpleModelMeta.Property_Name.PropertyType.IsAssignableFrom(type),
                     $"record['Name'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Name");
 #endif
-                result.Name = (string?)Name_Boxed;
+                result.Name = (string?)Name_AsObj;
             }
             // CreatedAt
-            if (record["CreatedAt"] is object CreatedAt_Boxed && CreatedAt_Boxed is not null)
+            if (record["CreatedAt"] is object CreatedAt_AsObj && CreatedAt_AsObj is not null)
             {
 #if DEBUG
-                var type = CreatedAt_Boxed.GetType();
-                var value = CreatedAt_Boxed;
+                var type = CreatedAt_AsObj.GetType();
+                var value = CreatedAt_AsObj;
                 System.Diagnostics.Debug.Assert(
                     MySimpleModelMeta.Property_CreatedAt.PropertyType.IsAssignableFrom(type),
                     $"record['CreatedAt'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.CreatedAt");
 #endif
-                result.CreatedAt = (DateTime)CreatedAt_Boxed;
+                result.CreatedAt = (DateTime)CreatedAt_AsObj;
             }
             // Status
-            if (record["Status"] is object Status_Boxed && Status_Boxed is not null)
+            if (record["Status"] is object Status_AsObj && Status_AsObj is not null)
             {
 #if DEBUG
-                var type = Status_Boxed.GetType();
-                var value = Status_Boxed;
+                var type = Status_AsObj.GetType();
+                var value = Status_AsObj;
                 System.Diagnostics.Debug.Assert(
                     MySimpleModelMeta.Property_Status.PropertyType.IsAssignableFrom(type),
                     $"record['Status'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Status");
 #endif
-                result.Status = (Status)Status_Boxed;
+                result.Status = (Status)Status_AsObj;
             }
             // ExternalReference
-            if (record["ExternalReference"] is object ExternalReference_Boxed && ExternalReference_Boxed is not null)
+            if (record["ExternalReference"] is object ExternalReference_AsObj && ExternalReference_AsObj is not null)
             {
 #if DEBUG
-                var type = ExternalReference_Boxed.GetType();
-                var value = ExternalReference_Boxed;
+                var type = ExternalReference_AsObj.GetType();
+                var value = ExternalReference_AsObj;
                 System.Diagnostics.Debug.Assert(
                     MySimpleModelMeta.Property_ExternalReference.PropertyType.IsAssignableFrom(type),
                     $"record['ExternalReference'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.ExternalReference");
 #endif
-                result.ExternalReference = (Guid?)ExternalReference_Boxed;
+                result.ExternalReference = (Guid?)ExternalReference_AsObj;
             }
             return result;
         }
@@ -135,86 +135,86 @@ namespace Genco.Test.Example
         public static void PopulateFromDictionary(this MySimpleModel instance, IDictionary<string, object?> dictionary)
         {
             // Id
-            if (dictionary.TryGetValue("Id", out var Id_Boxed))
+            if (dictionary.TryGetValue("Id", out var Id_AsObj))
             {
 #if DEBUG
-                if (Id_Boxed is not null)
+                if (Id_AsObj is not null)
                 {
-                    var type = Id_Boxed.GetType();
-                    var value = Id_Boxed;
+                    var type = Id_AsObj.GetType();
+                    var value = Id_AsObj;
                     System.Diagnostics.Debug.Assert(
                         MySimpleModelMeta.Property_Id.PropertyType.IsAssignableFrom(type),
                         $"dictionary['Id'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Id");
                 }
 #endif
-                if (Id_Boxed is not null) instance.Id = (int)Id_Boxed;
+                if (Id_AsObj is not null) instance.Id = (int)Id_AsObj;
                 else throw new ArgumentException("The value for the key 'Id' in the supplied dictionary is null", nameof(dictionary));
             }
             else throw new KeyNotFoundException("The key 'Id' was not present in the supplied dictionary");
             // Name
-            if (dictionary.TryGetValue("Name", out var Name_Boxed))
+            if (dictionary.TryGetValue("Name", out var Name_AsObj))
             {
 #if DEBUG
-                if (Name_Boxed is not null)
+                if (Name_AsObj is not null)
                 {
-                    var type = Name_Boxed.GetType();
-                    var value = Name_Boxed;
+                    var type = Name_AsObj.GetType();
+                    var value = Name_AsObj;
                     System.Diagnostics.Debug.Assert(
                         MySimpleModelMeta.Property_Name.PropertyType.IsAssignableFrom(type),
                         $"dictionary['Name'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Name");
                 }
 #endif
-                instance.Name = (string?)Name_Boxed;
+                instance.Name = (string?)Name_AsObj;
             }
             else instance.Name = null;
             // CreatedAt
-            if (dictionary.TryGetValue("CreatedAt", out var CreatedAt_Boxed))
+            if (dictionary.TryGetValue("CreatedAt", out var CreatedAt_AsObj))
             {
 #if DEBUG
-                if (CreatedAt_Boxed is not null)
+                if (CreatedAt_AsObj is not null)
                 {
-                    var type = CreatedAt_Boxed.GetType();
-                    var value = CreatedAt_Boxed;
+                    var type = CreatedAt_AsObj.GetType();
+                    var value = CreatedAt_AsObj;
                     System.Diagnostics.Debug.Assert(
                         MySimpleModelMeta.Property_CreatedAt.PropertyType.IsAssignableFrom(type),
                         $"dictionary['CreatedAt'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.CreatedAt");
                 }
 #endif
-                if (CreatedAt_Boxed is not null) instance.CreatedAt = (DateTime)CreatedAt_Boxed;
+                if (CreatedAt_AsObj is not null) instance.CreatedAt = (DateTime)CreatedAt_AsObj;
                 else throw new ArgumentException("The value for the key 'CreatedAt' in the supplied dictionary is null", nameof(dictionary));
             }
             else throw new KeyNotFoundException("The key 'CreatedAt' was not present in the supplied dictionary");
             // Status
-            if (dictionary.TryGetValue("Status", out var Status_Boxed))
+            if (dictionary.TryGetValue("Status", out var Status_AsObj))
             {
 #if DEBUG
-                if (Status_Boxed is not null)
+                if (Status_AsObj is not null)
                 {
-                    var type = Status_Boxed.GetType();
-                    var value = Status_Boxed;
+                    var type = Status_AsObj.GetType();
+                    var value = Status_AsObj;
                     System.Diagnostics.Debug.Assert(
                         MySimpleModelMeta.Property_Status.PropertyType.IsAssignableFrom(type),
                         $"dictionary['Status'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Status");
                 }
 #endif
-                if (Status_Boxed is not null) instance.Status = (Status)Status_Boxed;
+                if (Status_AsObj is not null) instance.Status = (Status)Status_AsObj;
                 else throw new ArgumentException("The value for the key 'Status' in the supplied dictionary is null", nameof(dictionary));
             }
             else throw new KeyNotFoundException("The key 'Status' was not present in the supplied dictionary");
             // ExternalReference
-            if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_Boxed))
+            if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_AsObj))
             {
 #if DEBUG
-                if (ExternalReference_Boxed is not null)
+                if (ExternalReference_AsObj is not null)
                 {
-                    var type = ExternalReference_Boxed.GetType();
-                    var value = ExternalReference_Boxed;
+                    var type = ExternalReference_AsObj.GetType();
+                    var value = ExternalReference_AsObj;
                     System.Diagnostics.Debug.Assert(
                         MySimpleModelMeta.Property_ExternalReference.PropertyType.IsAssignableFrom(type),
                         $"dictionary['ExternalReference'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.ExternalReference");
                 }
 #endif
-                instance.ExternalReference = (Guid?)ExternalReference_Boxed;
+                instance.ExternalReference = (Guid?)ExternalReference_AsObj;
             }
             else instance.ExternalReference = null;
         }

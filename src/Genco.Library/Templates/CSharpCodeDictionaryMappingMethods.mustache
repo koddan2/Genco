@@ -6,24 +6,24 @@
             {{#Properties}}
             // {{PropertyName}}
             {{#PropertyIsAssignable}}
-            if (dictionary.TryGetValue("{{PropertyName}}", out var {{PropertyName}}_Boxed))
+            if (dictionary.TryGetValue("{{PropertyName}}", out var {{PropertyName}}_AsObj))
             {
 #if DEBUG
-                if ({{PropertyName}}_Boxed is not null)
+                if ({{PropertyName}}_AsObj is not null)
                 {
-                    var type = {{PropertyName}}_Boxed.GetType();
-                    var value = {{PropertyName}}_Boxed;
+                    var type = {{PropertyName}}_AsObj.GetType();
+                    var value = {{PropertyName}}_AsObj;
                     System.Diagnostics.Debug.Assert(
                         {{ModelTypeName}}Meta.Property_{{PropertyName}}.PropertyType.IsAssignableFrom(type),
                         $"dictionary['{{PropertyName}}'] of type '{type.FullName}' (Value: {value}) is not assignable to {{ModelTypeName}}.{{PropertyName}}");
                 }
 #endif
                 {{#PropertyIsNotNull}}
-                if ({{PropertyName}}_Boxed is not null) instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed;
+                if ({{PropertyName}}_AsObj is not null) instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
                 else throw new ArgumentException("The value for the key '{{PropertyName}}' in the supplied dictionary is null", nameof(dictionary));
                 {{/PropertyIsNotNull}}
                 {{#PropertyIsNullable}}
-                instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed;
+                instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
                 {{/PropertyIsNullable}}
             }
             {{#PropertyIsNotNull}}

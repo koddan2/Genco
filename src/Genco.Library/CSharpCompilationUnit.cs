@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿/*
+TODO: clean this file up
+ */
+using System.Text;
 
 namespace Genco.Library;
 
@@ -7,16 +10,11 @@ public static class Indent
     public static string Spaces(string multilineString, int countSpaces)
     {
         var sb = new StringBuilder();
-        var reader = new StringReader(multilineString);
-        var spaces = string.Join(' ', Enumerable.Range(0, countSpaces + 1).Select(_ => ""));
-        while (true)
+        using var reader = new StringReader(multilineString);
+        var spaces = new string(' ', countSpaces);
+        string? line;
+        while ((line = reader.ReadLine()) != null)
         {
-            var line = reader.ReadLine();
-            if (line == null)
-            {
-                break;
-            }
-
             sb.Append(spaces).AppendLine(line);
         }
         return sb.ToString();

@@ -68,11 +68,11 @@ namespace Genco.Test.Example
 
         public static void PopulateFromDictionary(this MyMoreComplexModel instance, IDictionary<string, object?> dictionary)
         {
-            if (dictionary.TryGetValue("Status", out var Status_Boxed))
+            if (dictionary.TryGetValue("Status", out var Status_AsObj))
             {
-                if (Status_Boxed is not null)
+                if (Status_AsObj is not null)
                 {
-                    instance.Status = (Status)Status_Boxed;
+                    instance.Status = (Status)Status_AsObj;
                 }
                 else
                 {
@@ -83,9 +83,9 @@ namespace Genco.Test.Example
             {
                 throw new KeyNotFoundException("The key 'Status' was not present in the supplied dictionary");
             }
-            if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_Boxed))
+            if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_AsObj))
             {
-                instance.ExternalReference = (Guid?)ExternalReference_Boxed;
+                instance.ExternalReference = (Guid?)ExternalReference_AsObj;
             }
             else
             {

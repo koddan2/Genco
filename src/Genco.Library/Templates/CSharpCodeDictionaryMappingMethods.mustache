@@ -1,11 +1,29 @@
     public static class {{ModelTypeName}}DictionaryMappingExtensions
     {
+# if DEBUG
+        private static readonly Type _ModelType = typeof(MySimpleModel);
+        {{#Properties}}
+        private static readonly System.Reflection.PropertyInfo _Property{{PropertyName}} =
+            _ModelType.GetProperty("{{PropertyName}}")
+            ?? throw new InvalidOperationException("Could not find property '{{PropertyName}}' on {{ModelTypeName}}");
+        {{/Properties}}
+# endif
+
         public static void PopulateFromDictionary(this {{ModelTypeName}} instance, IDictionary<string, object?> dictionary)
         {
             {{#Properties}}
             // {{PropertyName}}
             {{#PropertyIsAssignable}}
             if (dictionary.TryGetValue("{{PropertyName}}", out var {{PropertyName}}_Boxed))
+            {
+# if DEBUG
+                if ({{PropertyName}}_Boxed is not null)
+                {
+                    var type = {{PropertyName}}_Boxed.GetType();
+                    System.Diagnostics.Debug.Assert(_Property{{PropertyName}}.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['{{PropertyName}}'] of type ({type.FullName}) is not assignable to {{ModelTypeName}}.{{PropertyName}}");
+                }
+# endif
                 {{#PropertyIsNotNull}}
                 if ({{PropertyName}}_Boxed is not null) instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed;
                 else throw new ArgumentException("The value for the key '{{PropertyName}}' in the supplied dictionary is null", nameof(dictionary));
@@ -13,6 +31,7 @@
                 {{#PropertyIsNullable}}
                 instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_Boxed;
                 {{/PropertyIsNullable}}
+            }
             {{#PropertyIsNotNull}}
             else throw new KeyNotFoundException("The key '{{PropertyName}}' was not present in the supplied dictionary");
             {{/PropertyIsNotNull}}

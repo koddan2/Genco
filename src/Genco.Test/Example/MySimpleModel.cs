@@ -50,30 +50,99 @@ namespace Genco.Test.Example
 
     public static class MySimpleModelDictionaryMappingExtensions
     {
+# if DEBUG
+        private static readonly Type _ModelType = typeof(MySimpleModel);
+        private static readonly System.Reflection.PropertyInfo _PropertyId =
+            _ModelType.GetProperty("Id")
+            ?? throw new InvalidOperationException("Could not find property 'Id' on MySimpleModel");
+        private static readonly System.Reflection.PropertyInfo _PropertyName =
+            _ModelType.GetProperty("Name")
+            ?? throw new InvalidOperationException("Could not find property 'Name' on MySimpleModel");
+        private static readonly System.Reflection.PropertyInfo _PropertyCreatedAt =
+            _ModelType.GetProperty("CreatedAt")
+            ?? throw new InvalidOperationException("Could not find property 'CreatedAt' on MySimpleModel");
+        private static readonly System.Reflection.PropertyInfo _PropertyStatus =
+            _ModelType.GetProperty("Status")
+            ?? throw new InvalidOperationException("Could not find property 'Status' on MySimpleModel");
+        private static readonly System.Reflection.PropertyInfo _PropertyExternalReference =
+            _ModelType.GetProperty("ExternalReference")
+            ?? throw new InvalidOperationException("Could not find property 'ExternalReference' on MySimpleModel");
+# endif
+
         public static void PopulateFromDictionary(this MySimpleModel instance, IDictionary<string, object?> dictionary)
         {
             // Id
             if (dictionary.TryGetValue("Id", out var Id_Boxed))
+            {
+# if DEBUG
+                if (Id_Boxed is not null)
+                {
+                    var type = Id_Boxed.GetType();
+                    System.Diagnostics.Debug.Assert(_PropertyId.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['Id'] of type ({type.FullName}) is not assignable to MySimpleModel.Id");
+                }
+# endif
                 if (Id_Boxed is not null) instance.Id = (int)Id_Boxed;
                 else throw new ArgumentException("The value for the key 'Id' in the supplied dictionary is null", nameof(dictionary));
+            }
             else throw new KeyNotFoundException("The key 'Id' was not present in the supplied dictionary");
             // Name
             if (dictionary.TryGetValue("Name", out var Name_Boxed))
+            {
+# if DEBUG
+                if (Name_Boxed is not null)
+                {
+                    var type = Name_Boxed.GetType();
+                    System.Diagnostics.Debug.Assert(_PropertyName.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['Name'] of type ({type.FullName}) is not assignable to MySimpleModel.Name");
+                }
+# endif
                 instance.Name = (string?)Name_Boxed;
+            }
             else instance.Name = null;
             // CreatedAt
             if (dictionary.TryGetValue("CreatedAt", out var CreatedAt_Boxed))
+            {
+# if DEBUG
+                if (CreatedAt_Boxed is not null)
+                {
+                    var type = CreatedAt_Boxed.GetType();
+                    System.Diagnostics.Debug.Assert(_PropertyCreatedAt.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['CreatedAt'] of type ({type.FullName}) is not assignable to MySimpleModel.CreatedAt");
+                }
+# endif
                 if (CreatedAt_Boxed is not null) instance.CreatedAt = (DateTime)CreatedAt_Boxed;
                 else throw new ArgumentException("The value for the key 'CreatedAt' in the supplied dictionary is null", nameof(dictionary));
+            }
             else throw new KeyNotFoundException("The key 'CreatedAt' was not present in the supplied dictionary");
             // Status
             if (dictionary.TryGetValue("Status", out var Status_Boxed))
+            {
+# if DEBUG
+                if (Status_Boxed is not null)
+                {
+                    var type = Status_Boxed.GetType();
+                    System.Diagnostics.Debug.Assert(_PropertyStatus.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['Status'] of type ({type.FullName}) is not assignable to MySimpleModel.Status");
+                }
+# endif
                 if (Status_Boxed is not null) instance.Status = (Status)Status_Boxed;
                 else throw new ArgumentException("The value for the key 'Status' in the supplied dictionary is null", nameof(dictionary));
+            }
             else throw new KeyNotFoundException("The key 'Status' was not present in the supplied dictionary");
             // ExternalReference
             if (dictionary.TryGetValue("ExternalReference", out var ExternalReference_Boxed))
+            {
+# if DEBUG
+                if (ExternalReference_Boxed is not null)
+                {
+                    var type = ExternalReference_Boxed.GetType();
+                    System.Diagnostics.Debug.Assert(_PropertyExternalReference.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['ExternalReference'] of type ({type.FullName}) is not assignable to MySimpleModel.ExternalReference");
+                }
+# endif
                 instance.ExternalReference = (Guid?)ExternalReference_Boxed;
+            }
             else instance.ExternalReference = null;
         }
 

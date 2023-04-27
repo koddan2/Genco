@@ -118,6 +118,7 @@ public static class CSharpCompilationUnit
         public void PreRender(IStubbleRenderer renderer)
         {
             CustomCodeSyntax = renderer.Render(CustomCodeSyntax, this);
+            FileHeader = renderer.Render(FileHeader, this);
             for (int i = 0; i < Constructors.Count; ++i)
             {
                 var ctor = Constructors[i];

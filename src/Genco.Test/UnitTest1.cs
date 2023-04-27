@@ -1,4 +1,5 @@
 using Genco.Test.Example;
+using Microsoft.Data.Sqlite;
 
 namespace Genco.Test
 {
@@ -12,13 +13,55 @@ namespace Genco.Test
         {
             var dict = new Dictionary<string, object?>
             {
-                ["Id"] = 1,
+                ["Id"] = 1L,
                 ["CreatedAt"] = DateTime.Now,
                 ["Status"] = Status.Problematic,
             };
             var instance = MySimpleModel.FromDictionary(dict);
             Assert.That(instance, Is.Not.Null);
-            Assert.Pass();
+        }
+
+        [Test]
+        public void DbTest1()
+        {
+            using var conn = new SqliteConnection("Data Source=:memory:");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText =
+                @"create table testing(
+                id integer primary key,
+                name text,
+                createdat text,
+                externalreference text,
+                status integer
+            );";
+            cmd.ExecuteNonQuery();
+            cmd.CommandText =
+                @"insert into testing(name, createdat, externalreference, status)
+            values (@Name, @CreatedAt, @ExternalReference, @Status);";
+            var model0 = new MySimpleModel
+            {
+                Name = "TestingName",
+                CreatedAt = DateTime.Parse("2019-12-19"),
+                ExternalReference = Guid.NewGuid(),
+                Status = Status.Problematic,
+            };
+            model0.AddAllParameters(cmd, nameof(MySimpleModel.Id));
+            cmd.ExecuteNonQuery();
+            cmd.CommandText = @"select * from testing;";
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                var output = MySimpleModel.LoadRecord(reader);
+                Assert.Multiple(() =>
+                {
+                    model0.Id = output.Id;
+                    Assert.That(output, Is.Not.Null);
+                    Assert.That(output, Is.EqualTo(model0));
+                    Assert.That(output.Id, Is.EqualTo(1));
+                    Assert.That(output.Name, Is.EqualTo(model0.Name));
+                });
+            }
         }
     }
 }

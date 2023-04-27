@@ -46,6 +46,7 @@ public static class CSharpCompilationUnit
     public record PropertyViewModel(PropertyDefinition PropertyDefinition)
     {
         public string? PropertyName => PropertyDefinition.Name;
+        public string? PropertyNameLower => PropertyName?.ToLower();
         public string? PropertyAttributeSyntax =>
             PropertyDefinition.Attributes is not null ? $"[{PropertyDefinition.Attributes}]" : null;
         public string? PropertyTypeSyntax => PropertyDefinition.Type;
@@ -103,6 +104,9 @@ public static class CSharpCompilationUnit
         public bool HasDefaultConstructor =>
             (!HasRecord || Record?.Parameters.Any() is false)
             && (!Constructors.Any() || Constructors.Any(ctor => !ctor.Parameters.Any()));
+
+        public Dictionary<string, dynamic> Data => Configuration.Extra.Data;
+        public string DataAsJson => System.Text.Json.JsonSerializer.Serialize(Data);
     }
 
     public record DtoViewModel(GencoConfigurationGenerateDtoElement Element, string ModelTypeName)

@@ -14,6 +14,16 @@ public record GencoConfiguration
     public GencoConfigurationRecordElement? Record { get; set; }
     public List<GencoConfigurationConstructorElement> Constructors { get; set; } = new();
     public List<PropertyDefinition> Properties { get; set; } = new();
+
+    public GencoConfigurationExtraElement Extra { get; set; } = new();
+}
+
+public class GencoConfigurationExtraElement
+{
+    public Dictionary<string, dynamic> Data { get; set; } = new();
+
+    // template-name => template-path
+    public Dictionary<string, string> Templates { get; set; } = new();
 }
 
 public class GencoConfigurationConstructorElement

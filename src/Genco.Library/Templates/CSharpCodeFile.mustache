@@ -42,21 +42,34 @@ namespace {{Namespace}}
         {{/Configuration.Generate.Mappers.Dictionary}}
 
         {{#Configuration.Generate.Mappers.AdoNet}}
-        public static {{ModelTypeName}} LoadRecord(IDataRecord record)
+        public static async IAsyncEnumerable<{{ModelTypeName}}> LoadRecordsAsync(DbDataReader reader)
         {
+            while (await reader.ReadAsync())
+            {
+                yield return LoadRecord(reader);
+            }
+        }
+        public static IEnumerable<{{ModelTypeName}}> LoadRecords(DbDataReader reader)
+        {
+            while (reader.Read())
+            {
+                yield return LoadRecord(reader);
+            }
+        }
+        public static {{ModelTypeName}} LoadRecord(DbDataReader reader)
+        {
+            Dictionary<string, int> columnIndexes = new();
+            for (int i = 0; i < reader.FieldCount; ++i)
+            {
+                columnIndexes.Add(reader.GetName(i), i);
+            }
             var result = new {{ModelTypeName}}();
             {{#Properties}}
             // {{PropertyName}}
-            if (record["{{PropertyName}}"] is object {{PropertyName}}_AsObj && {{PropertyName}}_AsObj is not null)
+            if (columnIndexes
+                .TryGetValue("{{PropertyNameLower}}", out int ordinal_{{PropertyName}}))
             {
-#if DEBUG
-                var type = {{PropertyName}}_AsObj.GetType();
-                var value = {{PropertyName}}_AsObj;
-                System.Diagnostics.Debug.Assert(
-                    {{ModelTypeName}}Meta.Property_{{PropertyName}}.PropertyType.IsAssignableFrom(type),
-                    $"record['{{PropertyName}}'] of type '{type.FullName}' (Value: {value}) is not assignable to {{ModelTypeName}}.{{PropertyName}}");
-#endif
-                result.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
+                result.{{PropertyName}} = reader.GetFieldValue<{{PropertyTypeSyntax}}>(ordinal_{{PropertyName}});
             }
             {{/Properties}}
             
@@ -87,4 +100,6 @@ namespace {{Namespace}}
 {{/Configuration.Generate.Mappers.AdoNet}}
 
 {{>CSharpCodeDtoTypeAndExtensions}}
+
+###REPLACE###
 }

@@ -1,4 +1,5 @@
 ﻿using CSharpier;
+using System.Security.Cryptography;
 using System.Text;
 using Tomlyn;
 
@@ -17,16 +18,23 @@ public static class GencoProcessor
         var outputDir = Path.GetDirectoryName(pathToTomlFile);
         var filename = FileResolver.ResolveFilename(cfg);
         var fullPathToFile = Path.Combine(outputDir.Require(), $"{filename}.cs");
-        var result = Renderer.RenderCSharp(fullPathToFile, viewModel);
+        var result = Renderer.RenderCSharp(fullPathToFile, viewModel, cfg);
         var formattedResult = CodeFormatter.Format(result.Code);
         if (formattedResult.CompilationErrors.Any())
         {
             throw new InvalidOperationException(
-                formattedResult.CompilationErrors.First().GetMessage()
+                string.Join(
+                    Environment.NewLine,
+                    formattedResult.CompilationErrors.Select(x => x.GetMessage())
+                )
             );
         }
         var cleanResult = CleanWhitespace(formattedResult.Code);
         File.WriteAllText(fullPathToFile, cleanResult);
+        File.WriteAllText(
+            $"{fullPathToFile}.signature",
+            Convert.ToHexString(SHA512.HashData(Encoding.Unicode.GetBytes(cleanResult)))
+        );
     }
 
     private static string CleanWhitespace(string code)

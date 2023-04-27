@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Common;
 using System.Data;
 using System.ComponentModel.DataAnnotations;
 using RangeAttribute = System.ComponentModel.DataAnnotations.RangeAttribute;
@@ -27,7 +28,7 @@ namespace Genco.Test.Example
         }
         // Id
         [Range(0x1000, 0xffff)]
-        public int Id { get; set; }
+        public long Id { get; set; }
         // Name
         [MaxLength(0xff)]
         public string? Name { get; set; }
@@ -43,68 +44,57 @@ namespace Genco.Test.Example
             result.PopulateFromDictionary(dictionary);
             return result;
         }
-        public static MySimpleModel LoadRecord(IDataRecord record)
+        public static async IAsyncEnumerable<MySimpleModel> LoadRecordsAsync(DbDataReader reader)
         {
+            while (await reader.ReadAsync())
+            {
+                yield return LoadRecord(reader);
+            }
+        }
+        public static IEnumerable<MySimpleModel> LoadRecords(DbDataReader reader)
+        {
+            while (reader.Read())
+            {
+                yield return LoadRecord(reader);
+            }
+        }
+        public static MySimpleModel LoadRecord(DbDataReader reader)
+        {
+            Dictionary<string, int> columnIndexes = new();
+            for (int i = 0; i < reader.FieldCount; ++i)
+            {
+                columnIndexes.Add(reader.GetName(i), i);
+            }
             var result = new MySimpleModel();
             // Id
-            if (record["Id"] is object Id_AsObj && Id_AsObj is not null)
+            if (columnIndexes
+                .TryGetValue("id", out int ordinal_Id))
             {
-#if DEBUG
-                var type = Id_AsObj.GetType();
-                var value = Id_AsObj;
-                System.Diagnostics.Debug.Assert(
-                    MySimpleModelMeta.Property_Id.PropertyType.IsAssignableFrom(type),
-                    $"record['Id'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Id");
-#endif
-                result.Id = (int)Id_AsObj;
+                result.Id = reader.GetFieldValue<long>(ordinal_Id);
             }
             // Name
-            if (record["Name"] is object Name_AsObj && Name_AsObj is not null)
+            if (columnIndexes
+                .TryGetValue("name", out int ordinal_Name))
             {
-#if DEBUG
-                var type = Name_AsObj.GetType();
-                var value = Name_AsObj;
-                System.Diagnostics.Debug.Assert(
-                    MySimpleModelMeta.Property_Name.PropertyType.IsAssignableFrom(type),
-                    $"record['Name'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Name");
-#endif
-                result.Name = (string?)Name_AsObj;
+                result.Name = reader.GetFieldValue<string?>(ordinal_Name);
             }
             // CreatedAt
-            if (record["CreatedAt"] is object CreatedAt_AsObj && CreatedAt_AsObj is not null)
+            if (columnIndexes
+                .TryGetValue("createdat", out int ordinal_CreatedAt))
             {
-#if DEBUG
-                var type = CreatedAt_AsObj.GetType();
-                var value = CreatedAt_AsObj;
-                System.Diagnostics.Debug.Assert(
-                    MySimpleModelMeta.Property_CreatedAt.PropertyType.IsAssignableFrom(type),
-                    $"record['CreatedAt'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.CreatedAt");
-#endif
-                result.CreatedAt = (DateTime)CreatedAt_AsObj;
+                result.CreatedAt = reader.GetFieldValue<DateTime>(ordinal_CreatedAt);
             }
             // Status
-            if (record["Status"] is object Status_AsObj && Status_AsObj is not null)
+            if (columnIndexes
+                .TryGetValue("status", out int ordinal_Status))
             {
-#if DEBUG
-                var type = Status_AsObj.GetType();
-                var value = Status_AsObj;
-                System.Diagnostics.Debug.Assert(
-                    MySimpleModelMeta.Property_Status.PropertyType.IsAssignableFrom(type),
-                    $"record['Status'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Status");
-#endif
-                result.Status = (Status)Status_AsObj;
+                result.Status = reader.GetFieldValue<Status>(ordinal_Status);
             }
             // ExternalReference
-            if (record["ExternalReference"] is object ExternalReference_AsObj && ExternalReference_AsObj is not null)
+            if (columnIndexes
+                .TryGetValue("externalreference", out int ordinal_ExternalReference))
             {
-#if DEBUG
-                var type = ExternalReference_AsObj.GetType();
-                var value = ExternalReference_AsObj;
-                System.Diagnostics.Debug.Assert(
-                    MySimpleModelMeta.Property_ExternalReference.PropertyType.IsAssignableFrom(type),
-                    $"record['ExternalReference'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.ExternalReference");
-#endif
-                result.ExternalReference = (Guid?)ExternalReference_AsObj;
+                result.ExternalReference = reader.GetFieldValue<Guid?>(ordinal_ExternalReference);
             }
             return result;
         }
@@ -147,7 +137,7 @@ namespace Genco.Test.Example
                         $"dictionary['Id'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Id");
                 }
 #endif
-                if (Id_AsObj is not null) instance.Id = (int)Id_AsObj;
+                if (Id_AsObj is not null) instance.Id = (long)Id_AsObj;
                 else throw new ArgumentException("The value for the key 'Id' in the supplied dictionary is null", nameof(dictionary));
             }
             else throw new KeyNotFoundException("The key 'Id' was not present in the supplied dictionary");
@@ -233,7 +223,16 @@ namespace Genco.Test.Example
     }
     public static class MySimpleModelAdoNetMappingExtensions
     {
-        public static void AddAllParameters(this MySimpleModel model, IDbCommand command, string[]? skipProperties = null)
+        /// <summary>
+        /// Adds all properties (that should not be skipped) using the following template:
+        /// <code>"@" + nameof(PropertyName)</code>
+        /// E.g. <example>
+        /// <code>"@MyCamelCasePropName"</code>
+        /// </example>
+        /// Some database providers are case-sensitive, so make sure you define them such
+        /// that they are compatible with this scheme.
+        /// </summary>
+        public static void AddAllParameters(this MySimpleModel model, IDbCommand command, params string[] skipProperties)
         {
             void AddParameter<T>(string parameterName, T value, string name)
             {
@@ -255,7 +254,7 @@ namespace Genco.Test.Example
     }
     public partial record MySimpleModelDto
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string? Name { get; set; }
         public DateTime CreatedAt { get; set; }
         public Status Status { get; set; }
@@ -283,6 +282,41 @@ namespace Genco.Test.Example
             result.ExternalReference = dto.ExternalReference;
             return result;
         }
+    }
+    public enum PropertiesOfMySimpleModel
+    {
+        /// <summary>
+        /// Signifies the Id property.
+        /// Attributes: [Range(0x1000, 0xffff)]
+        /// </summary>
+        Id,
+        /// <summary>
+        /// Signifies the Name property.
+        /// Attributes: [MaxLength(0xff)]
+        /// </summary>
+        Name,
+        /// <summary>
+        /// Signifies the CreatedAt property.
+        /// Attributes:
+        /// </summary>
+        CreatedAt,
+        /// <summary>
+        /// Signifies the Status property.
+        /// Attributes:
+        /// </summary>
+        Status,
+        /// <summary>
+        /// Signifies the ExternalReference property.
+        /// Attributes:
+        /// </summary>
+        ExternalReference,
+    }
+    public class MyCustomCodeForMySimpleModel
+    {
+        public const int Value = 1;
+        public static readonly Type MyType = typeof(MySimpleModel);
+        /*
+        */
     }
 }
 

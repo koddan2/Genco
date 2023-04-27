@@ -1,6 +1,15 @@
     public static class {{ModelTypeName}}AdoNetMappingExtensions
     {
-        public static void AddAllParameters(this {{ModelTypeName}} model, IDbCommand command, string[]? skipProperties = null)
+        /// <summary>
+        /// Adds all properties (that should not be skipped) using the following template:
+        /// <code>"@" + nameof(PropertyName)</code>
+        /// E.g. <example>
+        /// <code>"@MyCamelCasePropName"</code>
+        /// </example>
+        /// Some database providers are case-sensitive, so make sure you define them such
+        /// that they are compatible with this scheme.
+        /// </summary>
+        public static void AddAllParameters(this {{ModelTypeName}} model, IDbCommand command, params string[] skipProperties)
         {
             void AddParameter<T>(string parameterName, T value, string name)
             {

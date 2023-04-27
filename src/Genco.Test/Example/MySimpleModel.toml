@@ -15,6 +15,7 @@ Usings = [
     "System",
     "System.Collections.Generic",
     "System.Linq",
+    "System.Data.Common",
 
     # (optional) custom usings
     "System.Data",
@@ -26,6 +27,36 @@ CustomCode = """
 public static class SomeExtraStuff
 {
     public static readonly int Value = 1;
+}
+"""
+
+# Extra.Data is a dict string => dynamic, so you can put anything here.
+# It is available via Data in the templates
+[Extra.Data.Test]
+A = 1
+
+# add extra templates that will render within the namespace declaration, at the end of the file.
+[Extra.Templates]
+# Either a path
+#TestTemplate = "C:/temp/TestTemplate.mustache"
+# Or a multiline string containint at least one Environment.NewLine
+TestTemplate = """
+public enum PropertiesOf{{ModelTypeName}}
+{
+    {{#Properties}}
+    /// <summary>
+    /// Signifies the {{PropertyName}} property.
+    /// Attributes: {{PropertyAttributeSyntax}}
+    /// </summary>
+    {{PropertyName}},
+    {{/Properties}}
+}
+public class MyCustomCodeFor{{ModelTypeName}}
+{
+    public const int Value = {{Data.Test.A}};
+    public static readonly Type MyType = typeof({{ModelTypeName}});
+    /*
+    */
 }
 """
 
@@ -54,7 +85,7 @@ System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
 
 [[Properties]]
 Name = "Id"
-Type = "int"
+Type = "long"
 Setter = "set"
 Attributes = "Range(0x1000, 0xffff)"
 

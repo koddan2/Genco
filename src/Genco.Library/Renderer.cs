@@ -7,8 +7,13 @@ public record CSharpCodeFile(string FullPathToFile, string Code);
 
 public static class Renderer
 {
-    public static CSharpCodeFile RenderCSharp<T>(string fullPathToFile, T data)
+    public static CSharpCodeFile RenderCSharp<T>(
+        string fullPathToFile,
+        T data,
+        GencoConfiguration cfg
+    )
     {
+        var dynPartials = "";
         var stubble = new StubbleBuilder()
             .Configure(settings =>
             {
@@ -17,11 +22,27 @@ public static class Renderer
                 HelperLoadTemplate("CSharpCodeDictionaryMappingMethods");
                 HelperLoadTemplate("CSharpCodeAdoNetMappingMethods");
                 HelperLoadTemplate("CSharpCodeDtoTypeAndExtensions");
+                foreach (var extraTemplate in cfg.Extra.Templates)
+                {
+                    if (extraTemplate.Value.Contains(Environment.NewLine))
+                    {
+                        dynPartials += Indent.Spaces(extraTemplate.Value, 4);
+                    }
+                    else
+                    {
+                        dict.Add(extraTemplate.Key, File.ReadAllText(extraTemplate.Value));
+                        dynPartials +=
+                            $@"
+{{{{>{extraTemplate.Key}}}}}
+";
+                    }
+                }
                 settings.SetPartialTemplateLoader(new DictionaryLoader(dict));
             })
             .Build();
 
         string templateText = LoadTemplate("CSharpCodeFile");
+        templateText = templateText.Replace("###REPLACE###", dynPartials);
         // Sync
         var renderedText = stubble.Render(templateText, data);
 

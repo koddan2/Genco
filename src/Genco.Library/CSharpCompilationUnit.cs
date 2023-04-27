@@ -1,6 +1,8 @@
 ﻿/*
 TODO: clean this file up
  */
+using Stubble.Core;
+using Stubble.Core.Interfaces;
 using System.Text;
 
 namespace Genco.Library;
@@ -19,6 +21,11 @@ public static class Indent
         }
         return sb.ToString();
     }
+}
+
+public interface INeedsPreRendering
+{
+    void PreRender(IStubbleRenderer renderer);
 }
 
 public static class CSharpCompilationUnit
@@ -69,7 +76,7 @@ public static class CSharpCompilationUnit
         public IEnumerable<InvocationParameterViewModel> Parameters =>
             Element.ParameterList.Select(x => x.ToViewModel());
         public string? ParameterListSyntax => FormatParameterList(Element.ParameterList);
-        public string? CustomCodeSyntax =>
+        public string? CustomCodeSyntax { get; set; } =
             Element.CustomCode is null ? null : Indent.Spaces(Element.CustomCode, 12);
     }
 
@@ -90,14 +97,14 @@ public static class CSharpCompilationUnit
         string ModelTypeSyntax,
         RecordViewModel? Record,
         IEnumerable<PropertyViewModel> Properties,
-        IEnumerable<ConstructorViewModel> Constructors,
+        IList<ConstructorViewModel> Constructors,
         IEnumerable<DtoViewModel> Dtos
-    )
+    ) : INeedsPreRendering
     {
         public bool NullableEnable { get; set; } = true;
         public string? FileHeader { get; set; }
 
-        public string? CustomCodeSyntax =>
+        public string? CustomCodeSyntax { get; set; } =
             Configuration.CustomCode is null ? null : Indent.Spaces(Configuration.CustomCode, 4);
 
         private bool HasRecord => Record is not null;
@@ -107,11 +114,26 @@ public static class CSharpCompilationUnit
 
         public Dictionary<string, dynamic> Data => Configuration.Extra.Data;
         public string DataAsJson => System.Text.Json.JsonSerializer.Serialize(Data);
+
+        public void PreRender(IStubbleRenderer renderer)
+        {
+            CustomCodeSyntax = renderer.Render(CustomCodeSyntax, this);
+            for (int i = 0; i < Constructors.Count; ++i)
+            {
+                var ctor = Constructors[i];
+                Constructors[i] = (
+                    ctor with
+                    {
+                        CustomCodeSyntax = renderer.Render(ctor.CustomCodeSyntax, this)
+                    }
+                );
+            }
+        }
     }
 
     public record DtoViewModel(GencoConfigurationGenerateDtoElement Element, string ModelTypeName)
     {
-        public string Suffix => Element.Suffix;
+        public string Suffix => Element.Suffix ?? "Dto";
         public string DtoNameSyntax => $"{ModelTypeName}{Element.Suffix}";
     }
 
@@ -131,7 +153,7 @@ public static class CSharpCompilationUnit
             ModelTypeSyntax: cfg.Type.Default("record"),
             Record: cfg.Record?.ToViewModel(),
             Properties: cfg.Properties.Select(x => x.ToViewModel()),
-            Constructors: cfg.Constructors.Select(x => x.ToViewModel()),
+            Constructors: cfg.Constructors.ConvertAll(x => x.ToViewModel()),
             Dtos: cfg.Generate.DTO.Select(x => x.ToViewModel(modelTypeName))
         );
 

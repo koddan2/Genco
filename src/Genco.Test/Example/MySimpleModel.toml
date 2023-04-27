@@ -28,6 +28,7 @@ Usings = [
 CustomCode = """
 public static class SomeExtraStuff
 {
+    // {{ModelTypeName}}
     public static readonly int Value = 1;
 }
 """
@@ -84,7 +85,7 @@ GenerateMappers = true
 [[Constructors]]
 ParameterList = []
 CustomCode = """
-Console.WriteLine("Testing");
+Console.WriteLine("{{ModelTypeName}}");
 System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
 """
 

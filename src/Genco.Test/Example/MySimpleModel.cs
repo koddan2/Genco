@@ -13,6 +13,7 @@ namespace Genco.Test.Example
 {
     public static class SomeExtraStuff
     {
+        // MySimpleModel
         public static readonly int Value = 1;
     }
     /// <summary>
@@ -23,7 +24,7 @@ namespace Genco.Test.Example
     {
         public MySimpleModel()
         {
-            Console.WriteLine("Testing");
+            Console.WriteLine("MySimpleModel");
             System.Diagnostics.Debug.Assert(GetHashCode() != 0, "OOPS");
         }
         // Id

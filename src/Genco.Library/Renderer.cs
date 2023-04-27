@@ -44,6 +44,10 @@ public static class Renderer
         string templateText = LoadTemplate("CSharpCodeFile");
         templateText = templateText.Replace("###REPLACE###", dynPartials);
         // Sync
+        if (data is INeedsPreRendering needsPreRendering)
+        {
+            needsPreRendering.PreRender(stubble);
+        }
         var renderedText = stubble.Render(templateText, data);
 
         return new CSharpCodeFile(fullPathToFile, renderedText);

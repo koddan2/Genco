@@ -73,7 +73,7 @@ public record GencoConfigurationGenerateElement
 
 public record GencoConfigurationGenerateDtoElement
 {
-    public string Suffix { get; set; }
+    public string? Suffix { get; set; }
     public bool AllProperties { get; set; } = true;
     public bool GenerateMappers { get; set; } = true;
 }

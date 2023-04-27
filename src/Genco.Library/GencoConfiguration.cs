@@ -6,6 +6,7 @@ public record GencoConfiguration
     public string? PathToConfigurationFile { get; set; }
     public string? FileHeader { get; set; }
     public string? FileHeaderInclude { get; set; }
+    public string? PostInclude { get; set; }
     public string? Namespace { get; set; }
     public string? Name { get; set; }
     public string? Type { get; set; }
@@ -23,7 +24,7 @@ public class GencoConfigurationExtraElement
     public Dictionary<string, dynamic> Data { get; set; } = new();
 
     // template-name => template-path
-    public Dictionary<string, string> Templates { get; set; } = new();
+    public List<Dictionary<string, string>> Templates { get; set; } = new();
 }
 
 public class GencoConfigurationConstructorElement

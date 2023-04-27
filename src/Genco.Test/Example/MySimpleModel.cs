@@ -38,6 +38,8 @@ namespace Genco.Test.Example
         public Status Status { get; set; } = Status.Ok;
         // ExternalReference
         public Guid? ExternalReference { get; set; }
+        // Description
+        public string? Description { get; set; }
         public static MySimpleModel FromDictionary(IDictionary<string, object?> dictionary)
         {
             var result = new MySimpleModel();
@@ -96,6 +98,12 @@ namespace Genco.Test.Example
             {
                 result.ExternalReference = reader.GetFieldValue<Guid?>(ordinal_ExternalReference);
             }
+            // Description
+            if (columnIndexes
+                .TryGetValue("description", out int ordinal_Description))
+            {
+                result.Description = reader.GetFieldValue<string?>(ordinal_Description);
+            }
             return result;
         }
     }
@@ -118,6 +126,9 @@ namespace Genco.Test.Example
         internal static readonly System.Reflection.PropertyInfo Property_ExternalReference =
             ModelType.GetProperty("ExternalReference")
             ?? throw new InvalidOperationException("Could not find property 'ExternalReference' on MySimpleModel");
+        internal static readonly System.Reflection.PropertyInfo Property_Description =
+            ModelType.GetProperty("Description")
+            ?? throw new InvalidOperationException("Could not find property 'Description' on MySimpleModel");
     }
 #endif
     public static class MySimpleModelDictionaryMappingExtensions
@@ -156,7 +167,7 @@ namespace Genco.Test.Example
 #endif
                 instance.Name = (string?)Name_AsObj;
             }
-            else instance.Name = null;
+            else instance.Name = default;
             // CreatedAt
             if (dictionary.TryGetValue("CreatedAt", out var CreatedAt_AsObj))
             {
@@ -206,7 +217,23 @@ namespace Genco.Test.Example
 #endif
                 instance.ExternalReference = (Guid?)ExternalReference_AsObj;
             }
-            else instance.ExternalReference = null;
+            else instance.ExternalReference = default;
+            // Description
+            if (dictionary.TryGetValue("Description", out var Description_AsObj))
+            {
+#if DEBUG
+                if (Description_AsObj is not null)
+                {
+                    var type = Description_AsObj.GetType();
+                    var value = Description_AsObj;
+                    System.Diagnostics.Debug.Assert(
+                        MySimpleModelMeta.Property_Description.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['Description'] of type '{type.FullName}' (Value: {value}) is not assignable to MySimpleModel.Description");
+                }
+#endif
+                instance.Description = (string?)Description_AsObj;
+            }
+            else instance.Description = default;
         }
         public static IDictionary<string, object?> ToDictionary(this MySimpleModel instance)
         {
@@ -217,6 +244,7 @@ namespace Genco.Test.Example
                 ["CreatedAt"] = instance.CreatedAt,
                 ["Status"] = instance.Status,
                 ["ExternalReference"] = instance.ExternalReference,
+                ["Description"] = instance.Description,
             };
             return dictionary;
         }
@@ -250,6 +278,7 @@ namespace Genco.Test.Example
             AddParameter("@CreatedAt", model.CreatedAt, "CreatedAt");
             AddParameter("@Status", model.Status, "Status");
             AddParameter("@ExternalReference", model.ExternalReference, "ExternalReference");
+            AddParameter("@Description", model.Description, "Description");
         }
     }
     public partial record MySimpleModelDto
@@ -259,6 +288,7 @@ namespace Genco.Test.Example
         public DateTime CreatedAt { get; set; }
         public Status Status { get; set; }
         public Guid? ExternalReference { get; set; }
+        public string? Description { get; set; }
     }
     public static class MySimpleModelDtoMappingExtensions
     {
@@ -270,6 +300,7 @@ namespace Genco.Test.Example
             result.CreatedAt = instance.CreatedAt;
             result.Status = instance.Status;
             result.ExternalReference = instance.ExternalReference;
+            result.Description = instance.Description;
             return result;
         }
         public static MySimpleModel ToModel(this MySimpleModelDto dto)
@@ -280,9 +311,13 @@ namespace Genco.Test.Example
             result.CreatedAt = dto.CreatedAt;
             result.Status = dto.Status;
             result.ExternalReference = dto.ExternalReference;
+            result.Description = dto.Description;
             return result;
         }
     }
+    /*
+    From Common.toml
+    */
     public enum PropertiesOfMySimpleModel
     {
         /// <summary>
@@ -310,6 +345,11 @@ namespace Genco.Test.Example
         /// Attributes:
         /// </summary>
         ExternalReference,
+        /// <summary>
+        /// Signifies the Description property.
+        /// Attributes:
+        /// </summary>
+        Description,
     }
     public class MyCustomCodeForMySimpleModel
     {
@@ -318,5 +358,9 @@ namespace Genco.Test.Example
         /*
         */
     }
+    /*
+    Template in Common.toml
+    From Common.toml :: 1
+    */
 }
 

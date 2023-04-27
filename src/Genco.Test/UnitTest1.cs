@@ -48,7 +48,7 @@ namespace Genco.Test
             };
             model0.AddAllParameters(cmd, nameof(MySimpleModel.Id));
             cmd.ExecuteNonQuery();
-            cmd.CommandText = @"select * from testing;";
+            cmd.CommandText = "select * from testing;";
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {

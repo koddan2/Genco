@@ -30,7 +30,7 @@
             else throw new KeyNotFoundException("The key '{{PropertyName}}' was not present in the supplied dictionary");
             {{/PropertyIsNotNull}}
             {{#PropertyIsNullable}}
-            else instance.{{PropertyName}} = null;
+            else instance.{{PropertyName}} = default;
             {{/PropertyIsNullable}}
             {{/PropertyIsAssignable}}
             {{/Properties}}

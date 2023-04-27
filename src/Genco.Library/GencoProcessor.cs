@@ -9,9 +9,17 @@ public static class GencoProcessor
 {
     public static void ProcessFile(string pathToTomlFile)
     {
+        var containingDir = Path.GetDirectoryName(pathToTomlFile);
         var tomlText = File.ReadAllText(pathToTomlFile);
         TomlModelOptions tomlModelOptions = new() { ConvertPropertyName = s => s, };
         var cfg = Toml.ToModel<GencoConfiguration>(tomlText, options: tomlModelOptions);
+        if (cfg.PostInclude is string postInclude)
+        {
+            tomlText =
+                $@"{tomlText}
+{File.ReadAllText(Path.Combine(containingDir!, postInclude))}";
+            cfg = Toml.ToModel<GencoConfiguration>(tomlText, options: tomlModelOptions);
+        }
         cfg.PathToConfigurationFile = pathToTomlFile;
         var viewModel = CSharpCompilationUnit.FromConfiguration(cfg);
 

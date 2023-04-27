@@ -1,0 +1,15 @@
+[Extra.Data.Common]
+Info = "From Common.toml"
+
+[[Extra.Templates]]
+CommonTemplate = """
+/*
+Template in Common.toml
+{{Data.Common.Info}} :: {{Data.Test.A}}
+*/
+"""
+
+[[Properties]]
+Name = "Description"
+Type = "string?"
+Setter = "set"

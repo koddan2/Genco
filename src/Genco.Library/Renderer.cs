@@ -22,7 +22,7 @@ public static class Renderer
                 HelperLoadTemplate("CSharpCodeDictionaryMappingMethods");
                 HelperLoadTemplate("CSharpCodeAdoNetMappingMethods");
                 HelperLoadTemplate("CSharpCodeDtoTypeAndExtensions");
-                foreach (var extraTemplate in cfg.Extra.Templates)
+                foreach (var extraTemplate in cfg.Extra.Templates.SelectMany(x => x))
                 {
                     if (extraTemplate.Value.Contains(Environment.NewLine))
                     {

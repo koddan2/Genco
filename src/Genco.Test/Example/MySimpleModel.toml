@@ -4,6 +4,8 @@ FileHeader = """
 // </auto-generated>
 """
 
+PostInclude = "./Common.toml"
+
 # can be "class", "struct", "record", "record struct", "readonly record struct"
 # but also, if the type should be abstract or partial, it can be added here too,
 # e.g. "abstract class" or "partial record" &c.
@@ -36,11 +38,14 @@ public static class SomeExtraStuff
 A = 1
 
 # add extra templates that will render within the namespace declaration, at the end of the file.
-[Extra.Templates]
+[[Extra.Templates]]
 # Either a path
 #TestTemplate = "C:/temp/TestTemplate.mustache"
 # Or a multiline string containint at least one Environment.NewLine
 TestTemplate = """
+/*
+{{Data.Common.Info}}
+*/
 public enum PropertiesOf{{ModelTypeName}}
 {
     {{#Properties}}

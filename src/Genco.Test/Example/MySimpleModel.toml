@@ -15,7 +15,7 @@ Usings = [
     "System",
     "System.Collections.Generic",
     "System.Linq",
-    "System.Data.Common",
+    "System.Data.Common", # DbDataReader
 
     # (optional) custom usings
     "System.Data",

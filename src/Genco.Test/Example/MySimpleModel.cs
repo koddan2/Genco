@@ -107,6 +107,44 @@ namespace Genco.Test.Example
             }
             return result;
         }
+        public static class Sql
+        {
+            public enum IdentifierCasing
+            {
+                Verbatim = 0,
+                Invariant = 1,
+                Lower = 2,
+                Upper = 3,
+            }
+            static IEnumerable<string> TransformCasing(IEnumerable<string> names, IdentifierCasing casing) => names.Select(x => TransformCasing(x, casing));
+            static string TransformCasing(string name, IdentifierCasing casing) => casing switch
+            {
+                IdentifierCasing.Lower => name.ToLowerInvariant(),
+                IdentifierCasing.Upper => name.ToUpperInvariant(),
+                IdentifierCasing.Invariant => name.ToUpperInvariant(),
+                _ => name,
+            };
+            public static string GetInsertCommandText (string tableName = "MySimpleModel", IdentifierCasing casing = default, params string[] skipProperties)
+            {
+                var relevantProperties = new []
+                {
+                    "Id",
+                    "Name",
+                    "CreatedAt",
+                    "Status",
+                    "ExternalReference",
+                    "Description",
+                }.Except(skipProperties ?? Array.Empty<string>());
+                var relevantPropertiesWithCasing = TransformCasing(relevantProperties, casing);
+                var template = @"INSERT INTO {0}
+({1})
+VALUES ({2});";
+                var columnsList = string.Join(", ", relevantPropertiesWithCasing);
+                var valuesList = string.Join(", ", relevantProperties.Select(prop => $"@{prop}"));
+                var result = string.Format(template, tableName, columnsList, valuesList);
+                return result;
+            }
+        }
     }
 #if DEBUG
     internal static class MySimpleModelMeta

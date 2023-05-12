@@ -36,9 +36,10 @@ namespace Genco.Test
                 status integer
             );";
             cmd.ExecuteNonQuery();
-            cmd.CommandText =
-                @"insert into testing(name, createdat, externalreference, status)
-            values (@Name, @CreatedAt, @ExternalReference, @Status);";
+            ////cmd.CommandText =
+            ////    @"insert into testing(name, createdat, externalreference, status)
+            ////values (@Name, @CreatedAt, @ExternalReference, @Status);";
+            cmd.CommandText = MySimpleModel.Sql.GetInsertCommandText("testing", MySimpleModel.Sql.IdentifierCasing.Lower, nameof(MySimpleModel.Id), nameof(MySimpleModel.Description));
             var model0 = new MySimpleModel
             {
                 Name = "TestingName",
@@ -50,8 +51,10 @@ namespace Genco.Test
             cmd.ExecuteNonQuery();
             cmd.CommandText = "select * from testing;";
             using var reader = cmd.ExecuteReader();
+            var counter = 0;
             while (reader.Read())
             {
+                counter++;
                 var output = MySimpleModel.LoadRecord(reader);
                 Assert.Multiple(() =>
                 {
@@ -62,6 +65,7 @@ namespace Genco.Test
                     Assert.That(output.Name, Is.EqualTo(model0.Name));
                 });
             }
+            Assert.That(counter, Is.EqualTo(1));
         }
     }
 }

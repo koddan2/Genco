@@ -50,7 +50,10 @@ AdoNet = true
 
 # the idea is that we can define several DTO objects to generate types and mappers for
 # that has a subset of the main model's properties
-#[Generate.DTO]
+[[Generate.DTO]]
+Suffix = "Dto"
+AllProperties = true
+GenerateMappers = true
 
 [Record]
 ParameterList = [
@@ -63,21 +66,25 @@ ParameterList = [
 
 #[Constructor]
 
-[Properties.Name]
+[[Properties]]
+Name = "Name"
 Type = "string?"
 Setter = "init"
 Attributes = "MaxLength(0xff)"
 
-[Properties.CreatedAt]
+[[Properties]]
+Name = "CreatedAt"
 Type = "DateTime"
 #Setter
 DefaultValue = "DateTime.Now"
 
-[Properties.Status]
+[[Properties]]
+Name = "Status"
 Type = "Status"
 Setter = "set"
 DefaultValue = "Status.Ok"
 
-[Properties.ExternalReference]
+[[Properties]]
+Name = "ExternalReference"
 Type = "Guid?"
 Setter = "set"

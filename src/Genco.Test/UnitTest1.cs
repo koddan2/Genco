@@ -19,6 +19,15 @@ namespace Genco.Test
             };
             var instance = MySimpleModel.FromDictionary(dict);
             Assert.That(instance, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(instance.Id, Is.EqualTo(dict["Id"]));
+                Assert.That(instance.CreatedAt, Is.EqualTo(dict["CreatedAt"]));
+                Assert.That(instance.Status, Is.EqualTo(dict["Status"]));
+            });
+            var dto = instance.ToDto();
+            var instance2 = dto.ToModel();
+            Assert.That(instance, Is.EqualTo(instance2));
         }
 
         [Test]

@@ -1,0 +1,9 @@
+[[Generate.DTO]]
+Suffix = "Dto"
+AllProperties = true
+GenerateMappers = true
+
+[[Properties]]
+Name = "Id"
+Type = "long"
+Setter = "set"

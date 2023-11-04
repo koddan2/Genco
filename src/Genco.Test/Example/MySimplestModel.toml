@@ -1,0 +1,4 @@
+[[Properties]]
+Name = "Id"
+Type = "long"
+Setter = "set"

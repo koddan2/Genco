@@ -2,7 +2,10 @@
   "profiles": {
     "Genco ALL": {
       "commandName": "Project",
-      "commandLineArgs": "$[ProjectSourceRoot]/../Genco.Test/Example/MySimpleModel.toml $[ProjectSourceRoot]/../Genco.Test/Example/MyMoreComplexModel.toml"
+      "commandLineArgs": "$[ProjectSourceRoot]/../Genco.Test/Example/",
+      "environmentVariables": {
+        "GENCO_VERBOSITY": "10"
+      }
     },
     "Genco Simple": {
       "commandName": "Project",

@@ -4,7 +4,7 @@ FileHeader = """
 // </auto-generated>
 """
 
-PostInclude = "./Common.toml"
+PostInclude = "./Shared/Common.toml"
 
 # can be "class", "struct", "record", "record struct", "readonly record struct"
 # but also, if the type should be abstract or partial, it can be added here too,

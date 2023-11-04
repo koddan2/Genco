@@ -117,15 +117,46 @@ VALUES ({2});";
         {{/HasDefaultConstructor}}
     }
 
+    public enum {{ModelTypeName}}Properties
+    {
+        {{#Record.Parameters}}
+        {{ParameterName}},
+        {{/Record.Parameters}}
+        {{#Properties}}
+        {{PropertyName}},
+        {{/Properties}}
+    }
+
 #if DEBUG
     internal static class {{ModelTypeName}}Meta
     {
+        {{#AllProperties}}
+        private static System.Reflection.PropertyInfo? _Property_{{PropertyName}} = null;
+        {{/AllProperties}}
+
         internal static readonly Type ModelType = typeof(MySimpleModel);
-        {{#Properties}}
-        internal static readonly System.Reflection.PropertyInfo Property_{{PropertyName}} =
-            ModelType.GetProperty("{{PropertyName}}")
-            ?? throw new InvalidOperationException("Could not find property '{{PropertyName}}' on {{ModelTypeName}}");
-        {{/Properties}}
+
+        {{#AllProperties}}
+        internal static System.Reflection.PropertyInfo Property_{{PropertyName}}
+        {
+            get
+            {
+                if (_Property_{{PropertyName}} == null)
+                {
+                    _Property_{{PropertyName}} = 
+                        ModelType.GetProperty("{{PropertyName}}")
+                            ?? throw new InvalidOperationException("Could not find property '{{PropertyName}}' on {{ModelTypeName}}");
+                }
+
+                return _Property_{{PropertyName}};
+            }
+        }
+        {{/AllProperties}}
+        {{#AllProperties}}
+
+        internal static Type Type_{{PropertyName}} = typeof({{PropertyBaseTypeSyntax}});
+        internal static bool Type_{{PropertyName}}_IsNullable = {{PropertyIsNullableSyntax}};
+        {{/AllProperties}}
     }
 #endif
 

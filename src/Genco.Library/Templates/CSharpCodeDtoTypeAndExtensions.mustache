@@ -17,9 +17,12 @@
         }
         public static {{ModelTypeName}} ToModel(this {{DtoNameSyntax}} dto)
         {
-            var result = new {{ModelTypeName}}();
+            var obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(
+                {{ModelTypeName}}Meta.ModelType);
+            var result = ({{ModelTypeName}})obj;
             {{#Properties}}
-            result.{{PropertyName}} = dto.{{PropertyName}};
+            // result.{{PropertyName}} = dto.{{PropertyName}};
+            {{ModelTypeName}}Meta.Property_{{PropertyName}}.SetValue(result, dto.{{PropertyName}});
             {{/Properties}}
             return result;
         }

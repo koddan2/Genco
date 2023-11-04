@@ -57,6 +57,7 @@ public static class CSharpCompilationUnit
         public string? PropertyAttributeSyntax =>
             PropertyDefinition.Attributes is not null ? $"[{PropertyDefinition.Attributes}]" : null;
         public string? PropertyTypeSyntax => PropertyDefinition.Type;
+        public string? PropertyBaseTypeSyntax => PropertyDefinition.Type?.TrimEnd('?');
         public string? PropertySetterSyntax =>
             PropertyDefinition.Setter is null ? "" : $" {PropertyDefinition.Setter};";
         public string? PropertyDefaultValueSyntax =>
@@ -65,6 +66,7 @@ public static class CSharpCompilationUnit
         public bool PropertyIsNullable =>
             PropertyDefinition.Type?.StartsWith("Nullable<") is true
             || PropertyDefinition.Type?.EndsWith("?") is true;
+        public string PropertyIsNullableSyntax => PropertyIsNullable ? "true" : "false";
         public bool PropertyIsNotNull => !PropertyIsNullable;
     }
 
@@ -101,6 +103,17 @@ public static class CSharpCompilationUnit
         IEnumerable<DtoViewModel> Dtos
     ) : INeedsPreRendering
     {
+        public IEnumerable<PropertyViewModel> AllProperties => Record is RecordViewModel rec
+            ? rec.Element.ParameterList
+                .Select(x => new PropertyDefinition
+                {
+                    Attributes = string.Join(',', x.Attributes),
+                    DefaultValue = x.DefaultValue,
+                    Name = x.Name,
+                    Setter = null,
+                    Type = x.Type
+                }.ToViewModel()).Concat(Properties)
+            : Properties;
         public bool NullableEnable { get; set; } = true;
         public string? FileHeader { get; set; }
 
@@ -117,6 +130,11 @@ public static class CSharpCompilationUnit
 
         public void PreRender(IStubbleRenderer renderer)
         {
+            if (CustomCodeSyntax is null)
+            {
+                return;
+            }
+
             CustomCodeSyntax = renderer.Render(CustomCodeSyntax, this);
             FileHeader = renderer.Render(FileHeader, this);
             for (int i = 0; i < Constructors.Count; ++i)

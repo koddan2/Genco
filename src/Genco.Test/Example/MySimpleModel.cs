@@ -146,28 +146,115 @@ VALUES ({2});";
             }
         }
     }
+    public enum MySimpleModelProperties
+    {
+        Id,
+        Name,
+        CreatedAt,
+        Status,
+        ExternalReference,
+        Description,
+    }
 #if DEBUG
     internal static class MySimpleModelMeta
     {
+        private static System.Reflection.PropertyInfo? _Property_Id = null;
+        private static System.Reflection.PropertyInfo? _Property_Name = null;
+        private static System.Reflection.PropertyInfo? _Property_CreatedAt = null;
+        private static System.Reflection.PropertyInfo? _Property_Status = null;
+        private static System.Reflection.PropertyInfo? _Property_ExternalReference = null;
+        private static System.Reflection.PropertyInfo? _Property_Description = null;
         internal static readonly Type ModelType = typeof(MySimpleModel);
-        internal static readonly System.Reflection.PropertyInfo Property_Id =
-            ModelType.GetProperty("Id")
-            ?? throw new InvalidOperationException("Could not find property 'Id' on MySimpleModel");
-        internal static readonly System.Reflection.PropertyInfo Property_Name =
-            ModelType.GetProperty("Name")
-            ?? throw new InvalidOperationException("Could not find property 'Name' on MySimpleModel");
-        internal static readonly System.Reflection.PropertyInfo Property_CreatedAt =
-            ModelType.GetProperty("CreatedAt")
-            ?? throw new InvalidOperationException("Could not find property 'CreatedAt' on MySimpleModel");
-        internal static readonly System.Reflection.PropertyInfo Property_Status =
-            ModelType.GetProperty("Status")
-            ?? throw new InvalidOperationException("Could not find property 'Status' on MySimpleModel");
-        internal static readonly System.Reflection.PropertyInfo Property_ExternalReference =
-            ModelType.GetProperty("ExternalReference")
-            ?? throw new InvalidOperationException("Could not find property 'ExternalReference' on MySimpleModel");
-        internal static readonly System.Reflection.PropertyInfo Property_Description =
-            ModelType.GetProperty("Description")
-            ?? throw new InvalidOperationException("Could not find property 'Description' on MySimpleModel");
+        internal static System.Reflection.PropertyInfo Property_Id
+        {
+            get
+            {
+                if (_Property_Id == null)
+                {
+                    _Property_Id =
+                        ModelType.GetProperty("Id")
+                            ?? throw new InvalidOperationException("Could not find property 'Id' on MySimpleModel");
+                }
+                return _Property_Id;
+            }
+        }
+        internal static System.Reflection.PropertyInfo Property_Name
+        {
+            get
+            {
+                if (_Property_Name == null)
+                {
+                    _Property_Name =
+                        ModelType.GetProperty("Name")
+                            ?? throw new InvalidOperationException("Could not find property 'Name' on MySimpleModel");
+                }
+                return _Property_Name;
+            }
+        }
+        internal static System.Reflection.PropertyInfo Property_CreatedAt
+        {
+            get
+            {
+                if (_Property_CreatedAt == null)
+                {
+                    _Property_CreatedAt =
+                        ModelType.GetProperty("CreatedAt")
+                            ?? throw new InvalidOperationException("Could not find property 'CreatedAt' on MySimpleModel");
+                }
+                return _Property_CreatedAt;
+            }
+        }
+        internal static System.Reflection.PropertyInfo Property_Status
+        {
+            get
+            {
+                if (_Property_Status == null)
+                {
+                    _Property_Status =
+                        ModelType.GetProperty("Status")
+                            ?? throw new InvalidOperationException("Could not find property 'Status' on MySimpleModel");
+                }
+                return _Property_Status;
+            }
+        }
+        internal static System.Reflection.PropertyInfo Property_ExternalReference
+        {
+            get
+            {
+                if (_Property_ExternalReference == null)
+                {
+                    _Property_ExternalReference =
+                        ModelType.GetProperty("ExternalReference")
+                            ?? throw new InvalidOperationException("Could not find property 'ExternalReference' on MySimpleModel");
+                }
+                return _Property_ExternalReference;
+            }
+        }
+        internal static System.Reflection.PropertyInfo Property_Description
+        {
+            get
+            {
+                if (_Property_Description == null)
+                {
+                    _Property_Description =
+                        ModelType.GetProperty("Description")
+                            ?? throw new InvalidOperationException("Could not find property 'Description' on MySimpleModel");
+                }
+                return _Property_Description;
+            }
+        }
+        internal static Type Type_Id = typeof(long);
+        internal static bool Type_Id_IsNullable = false;
+        internal static Type Type_Name = typeof(string);
+        internal static bool Type_Name_IsNullable = true;
+        internal static Type Type_CreatedAt = typeof(DateTime);
+        internal static bool Type_CreatedAt_IsNullable = false;
+        internal static Type Type_Status = typeof(Status);
+        internal static bool Type_Status_IsNullable = false;
+        internal static Type Type_ExternalReference = typeof(Guid);
+        internal static bool Type_ExternalReference_IsNullable = true;
+        internal static Type Type_Description = typeof(string);
+        internal static bool Type_Description_IsNullable = true;
     }
 #endif
     public static class MySimpleModelDictionaryMappingExtensions
@@ -344,13 +431,21 @@ VALUES ({2});";
         }
         public static MySimpleModel ToModel(this MySimpleModelDto dto)
         {
-            var result = new MySimpleModel();
-            result.Id = dto.Id;
-            result.Name = dto.Name;
-            result.CreatedAt = dto.CreatedAt;
-            result.Status = dto.Status;
-            result.ExternalReference = dto.ExternalReference;
-            result.Description = dto.Description;
+            var obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(
+                MySimpleModelMeta.ModelType);
+            var result = (MySimpleModel)obj;
+            // result.Id = dto.Id;
+            MySimpleModelMeta.Property_Id.SetValue(result, dto.Id);
+            // result.Name = dto.Name;
+            MySimpleModelMeta.Property_Name.SetValue(result, dto.Name);
+            // result.CreatedAt = dto.CreatedAt;
+            MySimpleModelMeta.Property_CreatedAt.SetValue(result, dto.CreatedAt);
+            // result.Status = dto.Status;
+            MySimpleModelMeta.Property_Status.SetValue(result, dto.Status);
+            // result.ExternalReference = dto.ExternalReference;
+            MySimpleModelMeta.Property_ExternalReference.SetValue(result, dto.ExternalReference);
+            // result.Description = dto.Description;
+            MySimpleModelMeta.Property_Description.SetValue(result, dto.Description);
             return result;
         }
     }

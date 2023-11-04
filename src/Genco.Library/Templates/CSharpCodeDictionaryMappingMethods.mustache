@@ -40,9 +40,9 @@
         {
             var dictionary = new Dictionary<string, object?>
             {
-                {{#Configuration.Record.ParameterList}}
-                ["{{PropertyName}}"] = instance.{{PropertyName}},
-                {{/Configuration.Record.ParameterList}}
+                {{#Record.Parameters}}
+                ["{{ParameterName}}"] = instance.{{ParameterName}},
+                {{/Record.Parameters}}
                 {{#Properties}}
                 ["{{PropertyName}}"] = instance.{{PropertyName}},
                 {{/Properties}}

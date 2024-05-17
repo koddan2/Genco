@@ -25,17 +25,22 @@ namespace {{Namespace}}
 {{& CustomCodeSyntax}}
         }
         {{/Constructors}}
+
         {{#Properties}}
         // {{PropertyName}}
         {{PropertyAttributeSyntax}}
-        public {{PropertyTypeSyntax}} {{PropertyName}} { get;{{PropertySetterSyntax}} }{{PropertyDefaultValueSyntax}}
+        public {{PropertyRequiredSyntax}}{{PropertyTypeSyntax}} {{PropertyName}} { get;{{PropertySetterSyntax}} }{{PropertyDefaultValueSyntax}}
         {{/Properties}}
 
         {{#HasDefaultConstructor}}
         {{#Configuration.Generate.Mappers.Dictionary}}
         public static {{ModelTypeName}} FromDictionary(IDictionary<string, object?> dictionary)
         {
-            var result = new {{ModelTypeName}}();
+            // var result = new {{ModelTypeName}}();
+            var result = ({{ModelTypeName}})RuntimeHelpers.GetUninitializedObject(
+                typeof({{ModelTypeName}}));
+            // var constructor = typeof({{ModelTypeName}}).GetConstructor(Type.EmptyTypes);
+            // constructor.Invoke(result);
             result.PopulateFromDictionary(dictionary);
             return result;
         }
@@ -63,14 +68,24 @@ namespace {{Namespace}}
             {
                 columnIndexes.Add(reader.GetName(i), i);
             }
-            var result = new {{ModelTypeName}}();
+            var result = new {{ModelTypeName}}()
+            {
+                {{#Properties}}
+                {{#PropertyIsInit}}
+                {{PropertyName}} = reader.GetFieldValue<{{PropertyTypeSyntax}}>(
+                    columnIndexes["{{PropertyNameLower}}"]),
+                {{/PropertyIsInit}}
+                {{/Properties}}
+            };
             {{#Properties}}
             // {{PropertyName}}
+            {{^PropertyIsInit}}
             if (columnIndexes
                 .TryGetValue("{{PropertyNameLower}}", out int ordinal_{{PropertyName}}))
             {
                 result.{{PropertyName}} = reader.GetFieldValue<{{PropertyTypeSyntax}}>(ordinal_{{PropertyName}});
             }
+            {{/PropertyIsInit}}
             {{/Properties}}
             
             return result;
@@ -117,7 +132,7 @@ VALUES ({2});";
         {{/HasDefaultConstructor}}
     }
 
-    public enum {{ModelTypeName}}Properties
+    public enum {{ModelTypeName}}Property
     {
         {{#Record.Parameters}}
         {{ParameterName}},
@@ -127,14 +142,24 @@ VALUES ({2});";
         {{/Properties}}
     }
 
-#if DEBUG
     internal static class {{ModelTypeName}}Meta
     {
         {{#AllProperties}}
         private static System.Reflection.PropertyInfo? _Property_{{PropertyName}} = null;
         {{/AllProperties}}
 
-        internal static readonly Type ModelType = typeof(MySimpleModel);
+        internal static readonly Type ModelType = typeof({{ModelTypeName}});
+
+        internal static System.Reflection.PropertyInfo? GetProperty({{ModelTypeName}}Property property)
+        {
+            {{#AllProperties}}
+            if (property == {{ModelTypeName}}Property.{{PropertyName}})
+            {
+                return Property_{{PropertyName}};
+            }
+            {{/AllProperties}}
+            return null;
+        }
 
         {{#AllProperties}}
         internal static System.Reflection.PropertyInfo Property_{{PropertyName}}
@@ -154,11 +179,11 @@ VALUES ({2});";
         {{/AllProperties}}
         {{#AllProperties}}
 
-        internal static Type Type_{{PropertyName}} = typeof({{PropertyBaseTypeSyntax}});
-        internal static bool Type_{{PropertyName}}_IsNullable = {{PropertyIsNullableSyntax}};
+        /// <summary>Property <code>{{PropertyName}}</code> is <see cref="{{PropertyBaseTypeSyntax}}"/>.</summary>
+        internal static Type Type_{{PropertyName}} { get; } = typeof({{PropertyBaseTypeSyntax}});
+        internal static bool Type_{{PropertyName}}_IsNullable { get; } = {{PropertyIsNullableSyntax}};
         {{/AllProperties}}
     }
-#endif
 
 {{#Configuration.Generate.Mappers.Dictionary}}
 {{>CSharpCodeDictionaryMappingMethods}}
@@ -170,5 +195,17 @@ VALUES ({2});";
 
 {{>CSharpCodeDtoTypeAndExtensions}}
 
+    public static class {{ModelTypeName}}Extensions
+    {
+        public static IEnumerable<({{ModelTypeName}}Property Property, object? Value)> Enumerate(this {{ModelTypeName}} model)
+        {
+            {{#Record.Parameters}}
+            yield return ({{ModelTypeName}}Property.{{ParameterName}}, model.{{ParameterName}});
+            {{/Record.Parameters}}
+            {{#Properties}}
+            yield return ({{ModelTypeName}}Property.{{PropertyName}}, model.{{PropertyName}});
+            {{/Properties}}
+        }
+    }
 ###REPLACE###
 }

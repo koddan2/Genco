@@ -1,8 +1,9 @@
 {{#Dtos}}
+    // CSharpCodeDtoTypeAndExtensions
     public {{ModelTypeSyntax}} {{DtoNameSyntax}}
     {
         {{#Properties}}
-        public {{PropertyTypeSyntax}} {{PropertyName}} { get; set; }
+        public {{PropertyTypeNullableSyntax}} {{PropertyName}} { get; set; }
         {{/Properties}}
     }
     public static class {{DtoNameSyntax}}MappingExtensions
@@ -17,7 +18,7 @@
         }
         public static {{ModelTypeName}} ToModel(this {{DtoNameSyntax}} dto)
         {
-            var obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(
+            var obj = RuntimeHelpers.GetUninitializedObject(
                 {{ModelTypeName}}Meta.ModelType);
             var result = ({{ModelTypeName}})obj;
             {{#Properties}}

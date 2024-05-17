@@ -1,3 +1,4 @@
+    // CSharpCodeDictionaryMappingMethods
     public static class {{ModelTypeName}}DictionaryMappingExtensions
     {
 
@@ -5,7 +6,6 @@
         {
             {{#Properties}}
             // {{PropertyName}}
-            {{#PropertyIsAssignable}}
             if (dictionary.TryGetValue("{{PropertyName}}", out var {{PropertyName}}_AsObj))
             {
 #if DEBUG
@@ -19,24 +19,30 @@
                 }
 #endif
                 {{#PropertyIsNotNull}}
-                if ({{PropertyName}}_AsObj is not null) instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
+                if ({{PropertyName}}_AsObj is not null)
+                {
+                    // instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
+                    {{ModelTypeName}}Meta.Property_{{PropertyName}}.SetValue(instance, ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj);
+                }
                 else throw new ArgumentException("The value for the key '{{PropertyName}}' in the supplied dictionary is null", nameof(dictionary));
                 {{/PropertyIsNotNull}}
                 {{#PropertyIsNullable}}
-                instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
+                // instance.{{PropertyName}} = ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj;
+                {{ModelTypeName}}Meta.Property_{{PropertyName}}.SetValue(instance, ({{PropertyTypeSyntax}}){{PropertyName}}_AsObj);
                 {{/PropertyIsNullable}}
             }
             {{#PropertyIsNotNull}}
             else throw new KeyNotFoundException("The key '{{PropertyName}}' was not present in the supplied dictionary");
             {{/PropertyIsNotNull}}
             {{#PropertyIsNullable}}
+            {{^PropertyIsInit}}
             else instance.{{PropertyName}} = default;
+            {{/PropertyIsInit}}
             {{/PropertyIsNullable}}
-            {{/PropertyIsAssignable}}
             {{/Properties}}
         }
 
-        public static IDictionary<string, object?> ToDictionary(this {{ModelTypeName}} instance)
+        public static Dictionary<string, object?> ToDictionary(this {{ModelTypeName}} instance)
         {
             var dictionary = new Dictionary<string, object?>
             {

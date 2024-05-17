@@ -44,6 +44,7 @@ public record PropertyDefinition
 {
     public string? Name { get; set; }
     public string? Type { get; set; }
+    public bool? Required { get; set; }
     public string? Setter { get; set; }
     public string? Attributes { get; set; }
     public string? DefaultValue { get; set; }

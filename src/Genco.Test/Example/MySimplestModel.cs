@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 #nullable enable
 namespace Genco.Test.Example
 {
@@ -10,15 +11,24 @@ namespace Genco.Test.Example
         // Id
         public long Id { get; set; }
     }
-    public enum MySimplestModelProperties
+    public enum MySimplestModelProperty
     {
         Id,
     }
-#if DEBUG
     internal static class MySimplestModelMeta
     {
         private static System.Reflection.PropertyInfo? _Property_Id = null;
-        internal static readonly Type ModelType = typeof(MySimpleModel);
+        internal static readonly Type ModelType = typeof(MySimplestModel);
+        internal static System.Reflection.PropertyInfo? GetProperty(
+            MySimplestModelProperty property
+        )
+        {
+            if (property == MySimplestModelProperty.Id)
+            {
+                return Property_Id;
+            }
+            return null;
+        }
         internal static System.Reflection.PropertyInfo Property_Id
         {
             get
@@ -34,9 +44,18 @@ namespace Genco.Test.Example
                 return _Property_Id;
             }
         }
-        internal static Type Type_Id = typeof(long);
-        internal static bool Type_Id_IsNullable = false;
+        /// <summary>Property <code>Id</code> is <see cref="long"/>.</summary>
+        internal static Type Type_Id { get; } = typeof(long);
+        internal static bool Type_Id_IsNullable { get; } = false;
     }
-#endif
+    public static class MySimplestModelExtensions
+    {
+        public static IEnumerable<(MySimplestModelProperty Property, object? Value)> Enumerate(
+            this MySimplestModel model
+        )
+        {
+            yield return (MySimplestModelProperty.Id, model.Id);
+        }
+    }
 }
 

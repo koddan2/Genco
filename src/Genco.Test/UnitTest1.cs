@@ -48,7 +48,12 @@ namespace Genco.Test
             ////cmd.CommandText =
             ////    @"insert into testing(name, createdat, externalreference, status)
             ////values (@Name, @CreatedAt, @ExternalReference, @Status);";
-            cmd.CommandText = MySimpleModel.Sql.GetInsertCommandText("testing", MySimpleModel.Sql.IdentifierCasing.Lower, nameof(MySimpleModel.Id), nameof(MySimpleModel.Description));
+            cmd.CommandText = MySimpleModel.Sql.GetInsertCommandText(
+                "testing",
+                MySimpleModel.Sql.IdentifierCasing.Lower,
+                nameof(MySimpleModel.Id),
+                nameof(MySimpleModel.Description)
+            );
             var model0 = new MySimpleModel
             {
                 Name = "TestingName",

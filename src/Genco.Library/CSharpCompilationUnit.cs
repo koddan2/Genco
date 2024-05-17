@@ -57,12 +57,17 @@ public static class CSharpCompilationUnit
         public string? PropertyAttributeSyntax =>
             PropertyDefinition.Attributes is not null ? $"[{PropertyDefinition.Attributes}]" : null;
         public string? PropertyTypeSyntax => PropertyDefinition.Type;
+        public string? PropertyTypeNullableSyntax =>
+            PropertyIsNullable ? PropertyDefinition.Type : $"{PropertyDefinition.Type}?";
         public string? PropertyBaseTypeSyntax => PropertyDefinition.Type?.TrimEnd('?');
+        public bool PropertyIsInit => PropertyDefinition.Setter?.EndsWith("init") is true;
         public string? PropertySetterSyntax =>
             PropertyDefinition.Setter is null ? "" : $" {PropertyDefinition.Setter};";
         public string? PropertyDefaultValueSyntax =>
             PropertyDefinition.DefaultValue is null ? "" : $" = {PropertyDefinition.DefaultValue};";
-        public bool PropertyIsAssignable => PropertyDefinition.Setter == "set";
+        public bool PropertyIsRequired => PropertyDefinition.Required is true;
+        public string? PropertyRequiredSyntax => PropertyIsRequired ? "required " : "";
+        public bool PropertyIsAssignable => PropertyDefinition.Setter?.EndsWith("set") is true;
         public bool PropertyIsNullable =>
             PropertyDefinition.Type?.StartsWith("Nullable<") is true
             || PropertyDefinition.Type?.EndsWith("?") is true;
@@ -88,7 +93,10 @@ public static class CSharpCompilationUnit
 
     public record UsingsViewModel(HashSet<string> Usings)
     {
-        public IEnumerable<string> Syntaxes => Usings.Select(u => $"using {u};");
+        public IEnumerable<string> Syntaxes => [
+            "using System.Runtime.CompilerServices;",
+            ..Usings.Select(u => $"using {u};"),
+        ];
     }
 
     public record CodeFileViewModel(
@@ -103,17 +111,22 @@ public static class CSharpCompilationUnit
         IEnumerable<DtoViewModel> Dtos
     ) : INeedsPreRendering
     {
-        public IEnumerable<PropertyViewModel> AllProperties => Record is RecordViewModel rec
-            ? rec.Element.ParameterList
-                .Select(x => new PropertyDefinition
-                {
-                    Attributes = string.Join(',', x.Attributes),
-                    DefaultValue = x.DefaultValue,
-                    Name = x.Name,
-                    Setter = null,
-                    Type = x.Type
-                }.ToViewModel()).Concat(Properties)
-            : Properties;
+        public IEnumerable<PropertyViewModel> AllProperties =>
+            Record is RecordViewModel rec
+                ? rec.Element.ParameterList
+                    .Select(
+                        x =>
+                            new PropertyDefinition
+                            {
+                                Attributes = string.Join(',', x.Attributes),
+                                DefaultValue = x.DefaultValue,
+                                Name = x.Name,
+                                Setter = null,
+                                Type = x.Type
+                            }.ToViewModel()
+                    )
+                    .Concat(Properties)
+                : Properties;
         public bool NullableEnable { get; set; } = true;
         public string? FileHeader { get; set; }
 

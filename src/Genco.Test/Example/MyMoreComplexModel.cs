@@ -22,6 +22,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
+using System.Runtime.CompilerServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace Genco.Test.Example
         // ExternalReference
         public Guid? ExternalReference { get; set; }
     }
-    public enum MyMoreComplexModelProperties
+    public enum MyMoreComplexModelProperty
     {
         Id,
         Important,
@@ -63,7 +64,6 @@ namespace Genco.Test.Example
         Status,
         ExternalReference,
     }
-#if DEBUG
     internal static class MyMoreComplexModelMeta
     {
         private static System.Reflection.PropertyInfo? _Property_Id = null;
@@ -72,7 +72,35 @@ namespace Genco.Test.Example
         private static System.Reflection.PropertyInfo? _Property_CreatedAt = null;
         private static System.Reflection.PropertyInfo? _Property_Status = null;
         private static System.Reflection.PropertyInfo? _Property_ExternalReference = null;
-        internal static readonly Type ModelType = typeof(MySimpleModel);
+        internal static readonly Type ModelType = typeof(MyMoreComplexModel);
+        internal static System.Reflection.PropertyInfo? GetProperty(MyMoreComplexModelProperty property)
+        {
+            if (property == MyMoreComplexModelProperty.Id)
+            {
+                return Property_Id;
+            }
+            if (property == MyMoreComplexModelProperty.Important)
+            {
+                return Property_Important;
+            }
+            if (property == MyMoreComplexModelProperty.Name)
+            {
+                return Property_Name;
+            }
+            if (property == MyMoreComplexModelProperty.CreatedAt)
+            {
+                return Property_CreatedAt;
+            }
+            if (property == MyMoreComplexModelProperty.Status)
+            {
+                return Property_Status;
+            }
+            if (property == MyMoreComplexModelProperty.ExternalReference)
+            {
+                return Property_ExternalReference;
+            }
+            return null;
+        }
         internal static System.Reflection.PropertyInfo Property_Id
         {
             get
@@ -151,26 +179,67 @@ namespace Genco.Test.Example
                 return _Property_ExternalReference;
             }
         }
-        internal static Type Type_Id = typeof(int);
-        internal static bool Type_Id_IsNullable = false;
-        internal static Type Type_Important = typeof(bool);
-        internal static bool Type_Important_IsNullable = false;
-        internal static Type Type_Name = typeof(string);
-        internal static bool Type_Name_IsNullable = true;
-        internal static Type Type_CreatedAt = typeof(DateTime);
-        internal static bool Type_CreatedAt_IsNullable = false;
-        internal static Type Type_Status = typeof(Status);
-        internal static bool Type_Status_IsNullable = false;
-        internal static Type Type_ExternalReference = typeof(Guid);
-        internal static bool Type_ExternalReference_IsNullable = true;
+        /// <summary>Property <code>Id</code> is <see cref="int"/>.</summary>
+        internal static Type Type_Id { get; } = typeof(int);
+        internal static bool Type_Id_IsNullable { get; } = false;
+        /// <summary>Property <code>Important</code> is <see cref="bool"/>.</summary>
+        internal static Type Type_Important { get; } = typeof(bool);
+        internal static bool Type_Important_IsNullable { get; } = false;
+        /// <summary>Property <code>Name</code> is <see cref="string"/>.</summary>
+        internal static Type Type_Name { get; } = typeof(string);
+        internal static bool Type_Name_IsNullable { get; } = true;
+        /// <summary>Property <code>CreatedAt</code> is <see cref="DateTime"/>.</summary>
+        internal static Type Type_CreatedAt { get; } = typeof(DateTime);
+        internal static bool Type_CreatedAt_IsNullable { get; } = false;
+        /// <summary>Property <code>Status</code> is <see cref="Status"/>.</summary>
+        internal static Type Type_Status { get; } = typeof(Status);
+        internal static bool Type_Status_IsNullable { get; } = false;
+        /// <summary>Property <code>ExternalReference</code> is <see cref="Guid"/>.</summary>
+        internal static Type Type_ExternalReference { get; } = typeof(Guid);
+        internal static bool Type_ExternalReference_IsNullable { get; } = true;
     }
-#endif
+    // CSharpCodeDictionaryMappingMethods
     public static class MyMoreComplexModelDictionaryMappingExtensions
     {
         public static void PopulateFromDictionary(this MyMoreComplexModel instance, IDictionary<string, object?> dictionary)
         {
             // Name
+            if (dictionary.TryGetValue("Name", out var Name_AsObj))
+            {
+#if DEBUG
+                if (Name_AsObj is not null)
+                {
+                    var type = Name_AsObj.GetType();
+                    var value = Name_AsObj;
+                    System.Diagnostics.Debug.Assert(
+                        MyMoreComplexModelMeta.Property_Name.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['Name'] of type '{type.FullName}' (Value: {value}) is not assignable to MyMoreComplexModel.Name");
+                }
+#endif
+                // instance.Name = (string?)Name_AsObj;
+                MyMoreComplexModelMeta.Property_Name.SetValue(instance, (string?)Name_AsObj);
+            }
             // CreatedAt
+            if (dictionary.TryGetValue("CreatedAt", out var CreatedAt_AsObj))
+            {
+#if DEBUG
+                if (CreatedAt_AsObj is not null)
+                {
+                    var type = CreatedAt_AsObj.GetType();
+                    var value = CreatedAt_AsObj;
+                    System.Diagnostics.Debug.Assert(
+                        MyMoreComplexModelMeta.Property_CreatedAt.PropertyType.IsAssignableFrom(type),
+                        $"dictionary['CreatedAt'] of type '{type.FullName}' (Value: {value}) is not assignable to MyMoreComplexModel.CreatedAt");
+                }
+#endif
+                if (CreatedAt_AsObj is not null)
+                {
+                    // instance.CreatedAt = (DateTime)CreatedAt_AsObj;
+                    MyMoreComplexModelMeta.Property_CreatedAt.SetValue(instance, (DateTime)CreatedAt_AsObj);
+                }
+                else throw new ArgumentException("The value for the key 'CreatedAt' in the supplied dictionary is null", nameof(dictionary));
+            }
+            else throw new KeyNotFoundException("The key 'CreatedAt' was not present in the supplied dictionary");
             // Status
             if (dictionary.TryGetValue("Status", out var Status_AsObj))
             {
@@ -184,7 +253,11 @@ namespace Genco.Test.Example
                         $"dictionary['Status'] of type '{type.FullName}' (Value: {value}) is not assignable to MyMoreComplexModel.Status");
                 }
 #endif
-                if (Status_AsObj is not null) instance.Status = (Status)Status_AsObj;
+                if (Status_AsObj is not null)
+                {
+                    // instance.Status = (Status)Status_AsObj;
+                    MyMoreComplexModelMeta.Property_Status.SetValue(instance, (Status)Status_AsObj);
+                }
                 else throw new ArgumentException("The value for the key 'Status' in the supplied dictionary is null", nameof(dictionary));
             }
             else throw new KeyNotFoundException("The key 'Status' was not present in the supplied dictionary");
@@ -201,11 +274,12 @@ namespace Genco.Test.Example
                         $"dictionary['ExternalReference'] of type '{type.FullName}' (Value: {value}) is not assignable to MyMoreComplexModel.ExternalReference");
                 }
 #endif
-                instance.ExternalReference = (Guid?)ExternalReference_AsObj;
+                // instance.ExternalReference = (Guid?)ExternalReference_AsObj;
+                MyMoreComplexModelMeta.Property_ExternalReference.SetValue(instance, (Guid?)ExternalReference_AsObj);
             }
             else instance.ExternalReference = default;
         }
-        public static IDictionary<string, object?> ToDictionary(this MyMoreComplexModel instance)
+        public static Dictionary<string, object?> ToDictionary(this MyMoreComplexModel instance)
         {
             var dictionary = new Dictionary<string, object?>
             {
@@ -219,6 +293,7 @@ namespace Genco.Test.Example
             return dictionary;
         }
     }
+    // CSharpCodeAdoNetMappingMethods
     public static class MyMoreComplexModelAdoNetMappingExtensions
     {
         /// <summary>
@@ -251,11 +326,12 @@ namespace Genco.Test.Example
             AddParameter("@ExternalReference", model.ExternalReference, "ExternalReference");
         }
     }
+    // CSharpCodeDtoTypeAndExtensions
     public partial record MyMoreComplexModelDto
     {
         public string? Name { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public Status Status { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public Status? Status { get; set; }
         public Guid? ExternalReference { get; set; }
     }
     public static class MyMoreComplexModelDtoMappingExtensions
@@ -271,7 +347,7 @@ namespace Genco.Test.Example
         }
         public static MyMoreComplexModel ToModel(this MyMoreComplexModelDto dto)
         {
-            var obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(
+            var obj = RuntimeHelpers.GetUninitializedObject(
                 MyMoreComplexModelMeta.ModelType);
             var result = (MyMoreComplexModel)obj;
             // result.Name = dto.Name;
@@ -283,6 +359,18 @@ namespace Genco.Test.Example
             // result.ExternalReference = dto.ExternalReference;
             MyMoreComplexModelMeta.Property_ExternalReference.SetValue(result, dto.ExternalReference);
             return result;
+        }
+    }
+    public static class MyMoreComplexModelExtensions
+    {
+        public static IEnumerable<(MyMoreComplexModelProperty Property, object? Value)> Enumerate(this MyMoreComplexModel model)
+        {
+            yield return (MyMoreComplexModelProperty.Id, model.Id);
+            yield return (MyMoreComplexModelProperty.Important, model.Important);
+            yield return (MyMoreComplexModelProperty.Name, model.Name);
+            yield return (MyMoreComplexModelProperty.CreatedAt, model.CreatedAt);
+            yield return (MyMoreComplexModelProperty.Status, model.Status);
+            yield return (MyMoreComplexModelProperty.ExternalReference, model.ExternalReference);
         }
     }
 }

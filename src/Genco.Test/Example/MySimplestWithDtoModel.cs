@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 #nullable enable
 namespace Genco.Test.Example
 {
@@ -10,15 +11,24 @@ namespace Genco.Test.Example
         // Id
         public long Id { get; set; }
     }
-    public enum MySimplestWithDtoModelProperties
+    public enum MySimplestWithDtoModelProperty
     {
         Id,
     }
-#if DEBUG
     internal static class MySimplestWithDtoModelMeta
     {
         private static System.Reflection.PropertyInfo? _Property_Id = null;
-        internal static readonly Type ModelType = typeof(MySimpleModel);
+        internal static readonly Type ModelType = typeof(MySimplestWithDtoModel);
+        internal static System.Reflection.PropertyInfo? GetProperty(
+            MySimplestWithDtoModelProperty property
+        )
+        {
+            if (property == MySimplestWithDtoModelProperty.Id)
+            {
+                return Property_Id;
+            }
+            return null;
+        }
         internal static System.Reflection.PropertyInfo Property_Id
         {
             get
@@ -34,13 +44,14 @@ namespace Genco.Test.Example
                 return _Property_Id;
             }
         }
-        internal static Type Type_Id = typeof(long);
-        internal static bool Type_Id_IsNullable = false;
+        /// <summary>Property <code>Id</code> is <see cref="long"/>.</summary>
+        internal static Type Type_Id { get; } = typeof(long);
+        internal static bool Type_Id_IsNullable { get; } = false;
     }
-#endif
+    // CSharpCodeDtoTypeAndExtensions
     public record MySimplestWithDtoModelDto
     {
-        public long Id { get; set; }
+        public long? Id { get; set; }
     }
     public static class MySimplestWithDtoModelDtoMappingExtensions
     {
@@ -52,13 +63,21 @@ namespace Genco.Test.Example
         }
         public static MySimplestWithDtoModel ToModel(this MySimplestWithDtoModelDto dto)
         {
-            var obj = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(
-                MySimplestWithDtoModelMeta.ModelType
-            );
+            var obj = RuntimeHelpers.GetUninitializedObject(MySimplestWithDtoModelMeta.ModelType);
             var result = (MySimplestWithDtoModel)obj;
             // result.Id = dto.Id;
             MySimplestWithDtoModelMeta.Property_Id.SetValue(result, dto.Id);
             return result;
+        }
+    }
+    public static class MySimplestWithDtoModelExtensions
+    {
+        public static IEnumerable<(
+            MySimplestWithDtoModelProperty Property,
+            object? Value
+        )> Enumerate(this MySimplestWithDtoModel model)
+        {
+            yield return (MySimplestWithDtoModelProperty.Id, model.Id);
         }
     }
 }
